@@ -22,7 +22,7 @@ import {
  * add the lifecycle hooks to the component and return it
  *
  * @param {object} options={}
- * @returns {function(Component): Component}
+ * @returns {function(PassedComponent: Component): Component}
  */
 const addLifecycleHooks = (options = {}) => {
   if (!isPlainObject(options)) {
