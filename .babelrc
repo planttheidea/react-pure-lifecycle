@@ -1,0 +1,13 @@
+{
+  "plugins": [
+    "transform-decorators-legacy",
+    "add-module-exports"
+  ],
+  "presets": [
+    ["latest", {
+      "loose": true
+    }],
+    "react",
+    "stage-2"
+  ]
+}

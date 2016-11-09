@@ -1,0 +1,49 @@
+Arguments: 
+  /usr/bin/node /usr/bin/yarn add ava babel babel-eslint babel-cli babel-loader babel-plugin-add-module-exports babel-polyfill babel-register babel-preset-latest babel-preset-react babel-preset-stage-2 eslint eslint-friendly-formatter eslint-loader html-webpack-plugin in-publish nyc optimize-js-plugin react react-dom rimraf sinon webpack webpack-dev-server webpack-dashboard
+
+PATH: 
+  /usr/local/sbin:/usr/local/bin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+
+Yarn version: 
+  0.16.1
+
+Node version: 
+  7.0.0
+
+Platform: 
+  linux x64
+
+npm manifest: 
+  {
+    "name": "futz",
+    "version": "1.0.0",
+    "description": "Playground",
+    "main": "lib/index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "planttheidea",
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+bower manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: https://registry.yarnpkg.com/matcher/-/matcher-0.1.2.tgz: invalid tar file
+      at Extract.Parse._startEntry (/usr/lib/node_modules/yarn/node_modules/tar/lib/parse.js:149:13)
+      at Extract.Parse._process (/usr/lib/node_modules/yarn/node_modules/tar/lib/parse.js:131:12)
+      at BlockStream.<anonymous> (/usr/lib/node_modules/yarn/node_modules/tar/lib/parse.js:47:8)
+      at emitOne (events.js:96:13)
+      at BlockStream.emit (events.js:188:7)
+      at BlockStream._emitChunk (/usr/lib/node_modules/yarn/node_modules/block-stream/block-stream.js:145:10)
+      at BlockStream.flush (/usr/lib/node_modules/yarn/node_modules/block-stream/block-stream.js:70:8)
+      at BlockStream.end (/usr/lib/node_modules/yarn/node_modules/block-stream/block-stream.js:66:8)
+      at Extract.Parse.end (/usr/lib/node_modules/yarn/node_modules/tar/lib/parse.js:86:23)
+      at UnpackStream.onend (_stream_readable.js:511:10)
