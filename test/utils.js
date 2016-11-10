@@ -44,7 +44,8 @@ test('if createSingleLifecycleMethodDecorator returns an addHooks result', (t) =
   t.true(fn.calledOnce);
 });
 
-test('if setLifecycleMethods will only add the method when the item is a valid key from LIFECYCLE_METHODS', (t) => {
+test('if setLifecycleMethods will only add the method when the item is a valid key from LIFECYCLE_METHODS, ' +
+  'otherwise fires a warning', (t) => {
   const invalidMethod = 'foo';
   const validMethod = 'componentDidMount';
 
@@ -54,12 +55,17 @@ test('if setLifecycleMethods will only add the method when the item is a valid k
   const invalidComponent = {};
   const validComponent = {};
 
+  const stub = sinon.stub(global.console, 'warn');
+
   const invalidResult = setLifecycleMethods(invalidComponent, {
     [invalidMethod]: invalidStub
   });
   const invalidExpectedResult = {};
 
   t.deepEqual(invalidResult, invalidExpectedResult);
+  t.true(stub.calledOnce);
+
+  stub.restore();
 
   const validResult = setLifecycleMethods(validComponent, {
     [validMethod]: validStub

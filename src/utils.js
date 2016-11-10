@@ -35,10 +35,10 @@ const createSingleLifecycleMethodDecorator = (method, addHooks) => {
  * @returns {Component}
  */
 const setLifecycleMethods = (component, options) => {
-  Object.keys(options).forEach((method) => {
+  return Object.keys(options).reduce((instance, method) => {
     if (!!~LIFECYCLE_METHODS.indexOf(method)) {
       if (isFunction(options[method])) {
-        component[method] = (...args) => {
+        instance[method] = (...args) => {
           return options[method].call(undefined, component.props, ...args);
         };
       } else if (!IS_PRODUCTION) {
@@ -46,10 +46,14 @@ const setLifecycleMethods = (component, options) => {
         console.warn(`The value passed for ${method} is not a function, skipping.`);
         /* eslint-enable */
       }
+    } else if (!IS_PRODUCTION) {
+      /* eslint-disable no-console */
+      console.warn(`The key ${method} is not a valid lifecycle method, skipping.`);
+      /* eslint-enable */
     }
-  });
 
-  return component;
+    return instance;
+  }, component);
 };
 
 export {createSingleLifecycleMethodDecorator};

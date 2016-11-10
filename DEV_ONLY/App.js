@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, {
   Component,
   PropTypes
@@ -7,9 +6,7 @@ import {
   render
 } from 'react-dom';
 
-import futz, {
-  componentDidMount
-} from '../src';
+import lifecycle from '../src';
 
 const shouldComponentUpdate = (props, nextProps) => {
   const counterValue = parseInt(nextProps.children.replace('Counter value: ', ''), 10);
@@ -42,20 +39,20 @@ Div.propTypes = {
 };
 
 Div.contextTypes = {
-  foo: PropTypes.string
+  bar: PropTypes.string
 };
 
 Div.defaultProps = {
   children: []
 };
 
-const WrappedDiv = futz(options)(Div);
+const WrappedDiv = lifecycle(options)(Div);
 
 const fn = (...args) => {
   console.log(args);
 };
 
-@futz({componentDidUpdate: fn})
+@lifecycle({componentDidUpdate: fn})
 class OtherDiv extends Component {
   state = {
     foo: 'bar'
@@ -72,12 +69,12 @@ class OtherDiv extends Component {
 
 class App extends Component {
   static childContextTypes = {
-    foo: PropTypes.string
-  }
+    bar: PropTypes.string
+  };
 
   getChildContext() {
     return {
-      foo: 'bar'
+      bar: 'baz'
     };
   }
 

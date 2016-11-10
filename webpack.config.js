@@ -57,8 +57,8 @@ module.exports = {
   },
 
   output: {
-    filename: 'futz.js',
-    library: 'futz',
+    filename: 'react-pure-lifecycle.js',
+    library: '',
     libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
     umdNamedDefine: true
@@ -68,10 +68,7 @@ module.exports = {
     new webpack.EnvironmentPlugin([
       'NODE_ENV'
     ]),
-    new LodashModuleReplacementPlugin({
-      collections: true,
-      paths: true
-    })
+    new LodashModuleReplacementPlugin()
   ],
 
   resolve: {
