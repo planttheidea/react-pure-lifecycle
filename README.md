@@ -101,8 +101,8 @@ export default shouldComponentUpdate(onlyUpdateIfChanged)(FunctionalComponent);
 #### Development
 
 Standard stuff, clone the repo and `npm install` dependencies. The npm scripts available:
-* `build` => run webpack to build crio.js with NODE_ENV=development
-* `build:minifed` => run webpack to build crio.min.js with NODE_ENV=production
+* `build` => run webpack to build unminified JS with `NODE_ENV` set to `development` and source map
+* `build:minifed` => run webpack to build minified JS with `NODE_ENV` set to `production`
 * `clean` => run `rimraf` on both `lib` and `dist`
 * `lint` => run ESLint against all files in the `src` folder
 * `prepublish` => runs `prepubish:compile`
