@@ -110,5 +110,5 @@ Standard stuff, clone the repo and `npm install` dependencies. The npm scripts a
 * `start` => run webpack dev server to run example app (playground!)
 * `test` => run AVA test functions with `NODE_ENV=test`
 * `test:coverage` => run `test` with nyc to get output of code coverage
-* `test:watch` => same as `test`, but runs persistent watcher
+* `test:watch` => run `test`, but with persistent watcher
 * `transpile` => run babel against all files in `src` to create files in `lib`
