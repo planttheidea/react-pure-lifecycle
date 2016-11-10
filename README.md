@@ -49,11 +49,11 @@ import React, {
 import lifecycle from 'react-pure-lifecycle';
 
 const componentDidUpdate = (props, previousProps) => {
-    console.log('I mounted! Here are my props: ', props);
+    console.log('I updated! Here are my current and previous props: ', props, previousProps);
 };
 
 const methods = {
-    componentDidMount
+    componentDidUpdate
 };
 
 @lifecycle(methods)
