@@ -11,7 +11,7 @@ module.exports = Object.assign({}, defaultConfig, {
   devtool: undefined,
 
   output: Object.assign({}, defaultConfig.output, {
-    filename: 'futz.min.js'
+    filename: 'react-pure-lifecycle.min.js'
   }),
 
   plugins: defaultConfig.plugins.concat([

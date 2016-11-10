@@ -72,8 +72,8 @@ module.exports = {
   },
 
   output: {
-    filename: 'futz.js',
-    library: 'futz',
+    filename: 'react-pure-lifecycle.js',
+    library: 'ReactPureLifecycle',
     path: path.resolve(__dirname, 'dist'),
     publicPath: `http://localhost:${PORT}/`,
     umdNamedDefine: true
