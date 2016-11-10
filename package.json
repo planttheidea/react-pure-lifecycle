@@ -74,7 +74,7 @@
     "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
     "clean": "rimraf lib && rimraf dist",
     "lint": "NODE_ENV=test eslint src",
-    "prepublish": "in-publish && npm run publish:compile || in-install",
+    "prepublish": "in-publish && npm run publish:compile || echo ''",
     "prepublish:compile": "npm run clean && npm run lint && npm test && npm run transpile && npm run build && npm run build:minified",
     "start": "NODE_ENV=development webpack-dashboard -- webpack-dev-server --config=webpack.config.dev.js",
     "test": "NODE_PATH=.:src NODE_ENV=test ava --no-cache",
