@@ -38,7 +38,7 @@ const FunctionalComponent = ({children}) => {
 export default lifecycle(methods)(FunctionalComponent);
 ```
 
-The complete list of lifecycle methods are supported, minus `constructor` (if you want to fire something as early as possible, use `componentWillMount`). The first parameter passed to each lifecycle method is the component's current `props`, and then all standard parameters for that given lifecycle follow. For a detailed explanation of each of the methods and the parameters they expect, [check the React documentation](https://facebook.github.io/react/docs/react-component.html#the-component-lifecycle).
+The complete list of lifecycle methods are supported, minus `constructor` (if you want to fire something as early as possible, use `componentWillMount`). The first parameter passed to each lifecycle method is the component's current `props`, and then all standard parameters for that given lifecycle method follow. For a detailed explanation of each of the methods and the parameters they expect, [check the React documentation](https://facebook.github.io/react/docs/react-component.html#the-component-lifecycle).
 
 In addition to functional components, you can use this on a standard React class:
 
@@ -74,7 +74,7 @@ class ComponentClass extends Component {
 
 Not a whole lot of gain here other than the fact that you now have a pure function that you can test independently (no need to create an instance).
 
-Finally, each lifecycle method is also provided as their own decorator, if you just want to bind a single method:
+Finally, each lifecycle method is also provided as their own decorator, if you just want to bind a single method (receives the method itself instead of an object of methods):
 
 ```javascript
 import React from 'react';
