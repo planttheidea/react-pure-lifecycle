@@ -5,7 +5,7 @@
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 /**
- * @constant {Array<string>} LIFECYCLE_METHODS
+ * @constant {Object} LIFECYCLE_METHODS
  */
 export const LIFECYCLE_METHODS = {
   componentWillMount: true,
