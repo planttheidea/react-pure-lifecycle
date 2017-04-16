@@ -11,6 +11,7 @@ Add lifecycle methods to your functional components with purity
 * [Usage](#usage)
   * [Functional components](#functional-components)
   * [Class components](#class-components)
+  * [Individual method decorators](#individual-method-decorators)
 * [Making functional components pure](#making-functional-components-pure)
 * [Development](#development)
 
@@ -88,7 +89,9 @@ class ComponentClass extends Component {
 
 Not a whole lot of gain here other than the fact that you now have a pure function that you can test independently (no need to create an instance). This decoration method will also work on `PureComponent`s.
 
-Finally, each lifecycle method is also provided as their own decorator, if you just want to bind a single method (receives the method itself instead of an object of methods):
+#### Individual method decorators
+
+Each lifecycle method is also provided as their own decorator, if you just want to bind a single method (receives the method itself instead of an object of methods):
 
 ```javascript
 import React from 'react';
@@ -111,6 +114,8 @@ const FunctionalComponent = ({children}) => {
 // decorate the component
 export default shouldComponentUpdate(onlyUpdateIfChanged)(FunctionalComponent);
 ```
+
+If you pass `true` as the second parameter to any of these individual method decorators, it will make the component a `PureComponent` (see [Making functional components pure](#making-functional-components-pure) for more details).
 
 ### Making functional components pure
 
