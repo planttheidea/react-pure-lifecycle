@@ -6,6 +6,7 @@ import React, {
 
 // utils
 import {
+  getComponentDisplayName,
   setLifecycleMethods
 } from './utils';
 
@@ -20,7 +21,11 @@ import {
  * @returns {ReactComponent} HOC inheriting from PassedComponent with lifecycle methods
  */
 export const getClassHoc = (PassedComponent, methods) => {
+  const displayName = getComponentDisplayName(PassedComponent);
+
   return class PureLifecycleClass extends PassedComponent {
+    static displayName = displayName;
+
     constructor(...args) {
       super(...args);
 
@@ -46,11 +51,13 @@ export const getClassHoc = (PassedComponent, methods) => {
  */
 export const getFunctionHoc = (PassedComponent, methods, isPure) => {
   const ComponentToExtend = isPure ? PureComponent : Component;
+  const displayName = getComponentDisplayName(PassedComponent);
 
   return class PureLifecycleFunctional extends ComponentToExtend {
-    static propTypes = PassedComponent.propTypes;
     static contextTypes = PassedComponent.contextTypes;
+    static displayName = displayName;
     static defaultProps = PassedComponent.defaultProps;
+    static propTypes = PassedComponent.propTypes;
 
     constructor(...args) {
       super(...args);

@@ -65,6 +65,34 @@ test('if createSingleLifecycleMethodDecorator returns an addHooks result with is
   t.true(fn.calledOnce);
 });
 
+test('if getComponentDisplayName will get the function name when displayName is provided', (t) => {
+  const displayName = 'foo';
+  const fn = function bar() {};
+
+  fn.displayName = displayName;
+
+  const result = utils.getComponentDisplayName(fn);
+
+  t.is(result, `PureLifecycle(${displayName})`);
+});
+
+test('if getComponentDisplayName will get the function name when displayName is not provided', (t) => {
+  const displayName = undefined;
+  const fn = function bar() {};
+
+  fn.displayName = displayName;
+
+  const result = utils.getComponentDisplayName(fn);
+
+  t.is(result, `PureLifecycle(${fn.name})`);
+});
+
+test('if getComponentDisplayName will provide a fallback when function name is unable to be determined', (t) => {
+  const result = utils.getComponentDisplayName(() => {});
+
+  t.is(result, `PureLifecycle(Component)`);
+});
+
 test('if getInvalidMethodWarning will get the right warning message for a lifecycle method', (t) => {
   const methodName = 'componentDidMount';
 

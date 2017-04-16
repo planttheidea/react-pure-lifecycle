@@ -119,10 +119,11 @@ var LIFECYCLE_METHODS = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__constants__ = __webpack_require__(1);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createSingleLifecycleMethodDecorator; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return getComponentDisplayName; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return isReactClass; });
 /* unused harmony export isValidLifecycleMethodName */
 /* unused harmony export getInvalidMethodWarning */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return setLifecycleMethods; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return setLifecycleMethods; });
 // external dependencies
 
 
@@ -151,6 +152,21 @@ var createSingleLifecycleMethodDecorator = function createSingleLifecycleMethodD
 
     return addMethods((_addMethods = {}, _addMethods[method] = fn, _addMethods.isPure = isPure, _addMethods));
   };
+};
+
+/**
+ * @function getComponentDisplayName
+ *
+ * @description
+ * get the name to display for the component
+ *
+ * @param {ReactComponent} ReactComponent the component to get the name of
+ * @returns {string} the display name of ReactComponent
+ */
+var getComponentDisplayName = function getComponentDisplayName(ReactComponent) {
+  var componentName = ReactComponent.displayName || ReactComponent.name || (/function ([^\(]+)?\(/.exec(ReactComponent.toString()) || [])[1] || 'Component';
+
+  return 'PureLifecycle(' + componentName + ')';
 };
 
 /**
@@ -376,7 +392,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @returns {ReactComponent} HOC inheriting from PassedComponent with lifecycle methods
  */
 var getClassHoc = function getClassHoc(PassedComponent, methods) {
-  return function (_PassedComponent) {
+  var _class, _temp;
+
+  var displayName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getComponentDisplayName */])(PassedComponent);
+
+  return _temp = _class = function (_PassedComponent) {
     _inherits(PureLifecycleClass, _PassedComponent);
 
     function PureLifecycleClass() {
@@ -388,7 +408,7 @@ var getClassHoc = function getClassHoc(PassedComponent, methods) {
 
       var _this = _possibleConstructorReturn(this, _PassedComponent.call.apply(_PassedComponent, [this].concat(args)));
 
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* setLifecycleMethods */])(_this, methods);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setLifecycleMethods */])(_this, methods);
       return _this;
     }
 
@@ -397,7 +417,7 @@ var getClassHoc = function getClassHoc(PassedComponent, methods) {
     };
 
     return PureLifecycleClass;
-  }(PassedComponent);
+  }(PassedComponent), _class.displayName = displayName, _temp;
 };
 
 /**
@@ -412,11 +432,12 @@ var getClassHoc = function getClassHoc(PassedComponent, methods) {
  * @returns {ReactComponent} HOC wrapping PassedComponent with lifecycle methods
  */
 var getFunctionHoc = function getFunctionHoc(PassedComponent, methods, isPure) {
-  var _class, _temp;
+  var _class2, _temp2;
 
   var ComponentToExtend = isPure ? __WEBPACK_IMPORTED_MODULE_0_react__["PureComponent"] : __WEBPACK_IMPORTED_MODULE_0_react__["Component"];
+  var displayName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getComponentDisplayName */])(PassedComponent);
 
-  return _temp = _class = function (_ComponentToExtend) {
+  return _temp2 = _class2 = function (_ComponentToExtend) {
     _inherits(PureLifecycleFunctional, _ComponentToExtend);
 
     function PureLifecycleFunctional() {
@@ -428,7 +449,7 @@ var getFunctionHoc = function getFunctionHoc(PassedComponent, methods, isPure) {
 
       var _this2 = _possibleConstructorReturn(this, _ComponentToExtend.call.apply(_ComponentToExtend, [this].concat(args)));
 
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* setLifecycleMethods */])(_this2, methods);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setLifecycleMethods */])(_this2, methods);
       return _this2;
     }
 
@@ -437,7 +458,7 @@ var getFunctionHoc = function getFunctionHoc(PassedComponent, methods, isPure) {
     };
 
     return PureLifecycleFunctional;
-  }(ComponentToExtend), _class.propTypes = PassedComponent.propTypes, _class.contextTypes = PassedComponent.contextTypes, _class.defaultProps = PassedComponent.defaultProps, _temp;
+  }(ComponentToExtend), _class2.contextTypes = PassedComponent.contextTypes, _class2.displayName = displayName, _class2.defaultProps = PassedComponent.defaultProps, _class2.propTypes = PassedComponent.propTypes, _temp2;
 };
 
 /***/ }),

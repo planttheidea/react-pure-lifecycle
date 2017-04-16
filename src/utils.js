@@ -36,6 +36,22 @@ export const createSingleLifecycleMethodDecorator = (method, addMethods) => {
 };
 
 /**
+ * @function getComponentDisplayName
+ *
+ * @description
+ * get the name to display for the component
+ *
+ * @param {ReactComponent} ReactComponent the component to get the name of
+ * @returns {string} the display name of ReactComponent
+ */
+export const getComponentDisplayName = (ReactComponent) => {
+  const componentName = ReactComponent.displayName || ReactComponent.name ||
+    (/function ([^\(]+)?\(/.exec(ReactComponent.toString()) || [])[1] || 'Component';
+
+  return `PureLifecycle(${componentName})`;
+};
+
+/**
  * @function isReactClass
  *
  * @description
