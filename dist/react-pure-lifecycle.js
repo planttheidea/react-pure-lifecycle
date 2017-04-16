@@ -96,7 +96,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
 var IS_PRODUCTION = "development" === 'production';
 
 /**
- * @constant {Array<string>} LIFECYCLE_METHODS
+ * @constant {Object} LIFECYCLE_METHODS
  */
 var LIFECYCLE_METHODS = {
   componentWillMount: true,
@@ -292,8 +292,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "componentWillUpdate", function() { return componentWillUpdate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "componentDidUpdate", function() { return componentDidUpdate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "componentWillUnmount", function() { return componentWillUnmount; });
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 // external dependencies
@@ -337,9 +335,9 @@ var addLifecycleMethods = function addLifecycleMethods() {
 };
 
 var _Object$keys$reduce = Object.keys(__WEBPACK_IMPORTED_MODULE_3__constants__["a" /* LIFECYCLE_METHODS */]).reduce(function (exportsObject, method) {
-  var _extends2;
+  exportsObject[method] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils__["b" /* createSingleLifecycleMethodDecorator */])(method, addLifecycleMethods);
 
-  return _extends({}, exportsObject, (_extends2 = {}, _extends2[method] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils__["b" /* createSingleLifecycleMethodDecorator */])(method, addLifecycleMethods), _extends2));
+  return exportsObject;
 }, {}),
     componentWillMount = _Object$keys$reduce.componentWillMount,
     componentDidMount = _Object$keys$reduce.componentDidMount,

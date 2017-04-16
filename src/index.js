@@ -54,10 +54,9 @@ const {
   componentDidUpdate,
   componentWillUnmount
 } = Object.keys(LIFECYCLE_METHODS).reduce((exportsObject, method) => {
-  return {
-    ...exportsObject,
-    [method]: createSingleLifecycleMethodDecorator(method, addLifecycleMethods)
-  };
+  exportsObject[method] = createSingleLifecycleMethodDecorator(method, addLifecycleMethods);
+
+  return exportsObject;
 }, {});
 
 export {componentWillMount};
