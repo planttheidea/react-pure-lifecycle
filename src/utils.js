@@ -1,5 +1,9 @@
 // external dependencies
 import isFunction from 'lodash/isFunction';
+import {
+  Component,
+  PureComponent
+} from 'react';
 
 // constants
 import {
@@ -8,53 +12,98 @@ import {
 } from './constants';
 
 /**
- * partial application that will return the decorator for the
- * specific hook based on the function passed
+ * @function createSingleLifecycleMethodDecorator
  *
- * @param {function} method
- * @param {function} addHooks
- * @returns {function(Component): Component}
+ * @description
+ * partial application that will return the decorator for the
+ * specific method based on the function passed
+ *
+ * @param {function} method the method to add as a lifecycle method
+ * @param {function} addMethods the method that will add the lifecycle methods to the component
+ * @returns {function(ReactComponent, boolean): ReactComponent} the decorator for a specific method
  */
-const createSingleLifecycleMethodDecorator = (method, addHooks) => {
-  return (fn) => {
+export const createSingleLifecycleMethodDecorator = (method, addMethods) => {
+  return (fn, isPure) => {
     if (!isFunction(fn)) {
       throw new TypeError(`Parameter passed to ${method} must be a function.`);
     }
 
-    return addHooks({
-      [method]: fn
+    return addMethods({
+      [method]: fn,
+      isPure
     });
   };
 };
 
 /**
+ * @function isReactClass
+ *
+ * @description
+ * is the component passed a react class
+ *
+ * @param {ReactComponent} ComponentToTest the component to test
+ * @returns {boolean} is ComponentToTest a react component instantiated via the class
+ */
+export const isReactClass = (ComponentToTest) => {
+  return Component.isPrototypeOf(ComponentToTest) || PureComponent.isPrototypeOf(ComponentToTest);
+};
+
+/**
+ * @function isValidLifecycleMethodName
+ *
+ * @description
+ * is the methodName provided a valid lifecycle method name
+ *
+ * @param {string} methodName the name to check
+ * @returns {boolean} is the methodName valid
+ */
+export const isValidLifecycleMethodName = (methodName) => {
+  return !!LIFECYCLE_METHODS[methodName];
+};
+
+/**
+ * @function getInvalidMethodWarning
+ *
+ * @description
+ * get the warning message to display in non-production environments when the method is invalid
+ *
+ * @param {string} methodName the name of the invalid method
+ * @returns {string} the message to display in the warning
+ */
+export const getInvalidMethodWarning = (methodName) => {
+  return isValidLifecycleMethodName(methodName) ?
+    `The value passed for ${methodName} is not a function, skipping.` :
+    `The key ${methodName} is not a valid lifecycle method, skipping.`;
+};
+
+/**
+ * @function setLifecycleMethods
+ *
+ * @description
  * assign the lifecycle methods to the instance
  *
- * @param {Component} component
- * @param {object} options
- * @returns {Component}
+ * @param {ReactComponent} component the component whose methods will be augmented
+ * @param {object} methods the methods to apply to the component
+ * @returns {ReactComponent} the augmented component
  */
-const setLifecycleMethods = (component, options) => {
-  return Object.keys(options).reduce((instance, method) => {
-    if (!!~LIFECYCLE_METHODS.indexOf(method)) {
-      if (isFunction(options[method])) {
-        instance[method] = (...args) => {
-          return options[method].call(undefined, component.props, ...args);
-        };
-      } else if (!IS_PRODUCTION) {
-        /* eslint-disable no-console */
-        console.warn(`The value passed for ${method} is not a function, skipping.`);
-        /* eslint-enable */
-      }
-    } else if (!IS_PRODUCTION) {
+export const setLifecycleMethods = (component, methods) => {
+  return Object.keys(methods).reduce((instance, methodName) => {
+    const method = methods[methodName];
+
+    if (isValidLifecycleMethodName(methodName) && isFunction(method)) {
+      instance[methodName] = (...args) => {
+        return method(component.props, ...args);
+      };
+
+      return instance;
+    }
+
+    if (!IS_PRODUCTION) {
       /* eslint-disable no-console */
-      console.warn(`The key ${method} is not a valid lifecycle method, skipping.`);
+      console.warn(getInvalidMethodWarning(methodName));
       /* eslint-enable */
     }
 
     return instance;
   }, component);
 };
-
-export {createSingleLifecycleMethodDecorator};
-export {setLifecycleMethods};

@@ -1,6 +1,7 @@
 // external dependencies
 import React, {
-  Component
+  Component,
+  PureComponent
 } from 'react';
 
 // utils
@@ -9,39 +10,44 @@ import {
 } from './utils';
 
 /**
- * for class-based components, use inheritance inversion to retain
- * state, overriding the lifecycle methods
+ * @function getClassHoc
  *
- * @param {Component} PassedComponent
- * @param {object} options
- * @returns {Component}
+ * @description
+ * for class-based components, use inheritance inversion to retain state, overriding the lifecycle methods
+ *
+ * @param {ReactComponent} PassedComponent the component to wrap in an HOC
+ * @param {Object} methods the methods to apply to the HOC
+ * @returns {ReactComponent} HOC inheriting from PassedComponent with lifecycle methods
  */
-const getClassHoc = (PassedComponent, options) => {
-  class PureLifecycleClass extends PassedComponent {
+export const getClassHoc = (PassedComponent, methods) => {
+  return class PureLifecycleClass extends PassedComponent {
     constructor(...args) {
       super(...args);
 
-      setLifecycleMethods(this, options);
+      setLifecycleMethods(this, methods);
     }
 
     render() {
       return super.render();
     }
-  }
-
-  return PureLifecycleClass;
+  };
 };
 
 /**
- * for function-based components, use a props proxy wrapper and
- * add the lifecycle methods
+ * @function getFunctionHoc
  *
- * @param {Component} PassedComponent
- * @param {object} options
- * @returns {Component}
+ * @description
+ * for function-based components, use a props proxy wrapper and add the lifecycle methods
+ *
+ * @param {ReactComponent} PassedComponent the component to wrap in an HOC
+ * @param {Object} methods the methods to apply to the HOC
+ * @param {boolean} isPure is the component pure or not
+ * @returns {ReactComponent} HOC wrapping PassedComponent with lifecycle methods
  */
-const getFunctionHoc = (PassedComponent, options) => {
-  class PureLifecycleFunctional extends Component {
+export const getFunctionHoc = (PassedComponent, methods, isPure) => {
+  const ComponentToExtend = isPure ? PureComponent : Component;
+
+  return class PureLifecycleFunctional extends ComponentToExtend {
     static propTypes = PassedComponent.propTypes;
     static contextTypes = PassedComponent.contextTypes;
     static defaultProps = PassedComponent.defaultProps;
@@ -49,7 +55,7 @@ const getFunctionHoc = (PassedComponent, options) => {
     constructor(...args) {
       super(...args);
 
-      setLifecycleMethods(this, options);
+      setLifecycleMethods(this, methods);
     }
 
     render() {
@@ -57,10 +63,5 @@ const getFunctionHoc = (PassedComponent, options) => {
         <PassedComponent {...this.props}/>
       );
     }
-  }
-
-  return PureLifecycleFunctional;
+  };
 };
-
-export {getClassHoc};
-export {getFunctionHoc};

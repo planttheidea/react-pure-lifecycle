@@ -1,40 +1,47 @@
 // external dependencies
 import isPlainObject from 'lodash/isPlainObject';
-import React, {
-  Component
-} from 'react';
+import React from 'react';
 
-// utils
+//components
 import {
   getClassHoc,
   getFunctionHoc
 } from './components';
-import {
-  createSingleLifecycleMethodDecorator
-} from './utils';
 
 // constants
 import {
   LIFECYCLE_METHODS
 } from './constants';
 
+// utils
+import {
+  createSingleLifecycleMethodDecorator,
+  isReactClass
+} from './utils';
+
 /**
+ * @function addLifecycleMethods
+ *
+ * @description
  * add the lifecycle hooks to the component and return it
  *
- * @param {object} options={}
- * @returns {function(PassedComponent: Component): Component}
+ * @param {Object} [options={}] the options passed
+ * @returns {function(PassedComponent: ReactComponent): ReactComponent} the component augmented with lifecycle methods
  */
-const addLifecycleHooks = (options = {}) => {
+const addLifecycleMethods = (options = {}) => {
   if (!isPlainObject(options)) {
     throw new TypeError('Options passed must be a plain object.');
   }
 
-  return (PassedComponent) => {
-    if (Component.isPrototypeOf(PassedComponent)) {
-      return getClassHoc(PassedComponent, options);
-    }
+  const {
+    isPure = false,
+    ...methods
+  } = options;
 
-    return getFunctionHoc(PassedComponent, options);
+  return (PassedComponent) => {
+    const getHoc = isReactClass(PassedComponent) ? getClassHoc : getFunctionHoc;
+
+    return getHoc(PassedComponent, methods, isPure);
   };
 };
 
@@ -46,10 +53,10 @@ const {
   componentWillUpdate,
   componentDidUpdate,
   componentWillUnmount
-} = LIFECYCLE_METHODS.reduce((exportsObject, method) => {
+} = Object.keys(LIFECYCLE_METHODS).reduce((exportsObject, method) => {
   return {
     ...exportsObject,
-    [method]: createSingleLifecycleMethodDecorator(method, addLifecycleHooks)
+    [method]: createSingleLifecycleMethodDecorator(method, addLifecycleMethods)
   };
 }, {});
 
@@ -61,4 +68,4 @@ export {componentWillUpdate};
 export {componentDidUpdate};
 export {componentWillUnmount};
 
-export default addLifecycleHooks;
+export default addLifecycleMethods;

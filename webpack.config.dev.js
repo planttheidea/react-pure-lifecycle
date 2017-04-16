@@ -1,16 +1,15 @@
+'use strict';
+
 const path = require('path');
-const webpack = require('webpack');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackDashboard = require('webpack-dashboard/plugin');
 
-const eslintFriendlyFormatter = require('eslint-friendly-formatter');
+const defaultConfig = require('./webpack.config');
 
 const PORT = 3000;
 
-module.exports = {
-  cache: true,
-
+module.exports = Object.assign({}, defaultConfig, {
   devServer: {
     contentBase: './dist',
     host: 'localhost',
@@ -25,78 +24,29 @@ module.exports = {
     }
   },
 
-  devtool: '#source-map',
-
   entry: [
     path.resolve(__dirname, 'DEV_ONLY', 'App.js')
   ],
 
-  eslint: {
-    configFile: '.eslintrc',
-    emitError: true,
-    failOnError: true,
-    failOnWarning: false,
-    formatter: eslintFriendlyFormatter
-  },
+  externals: undefined,
 
-  module: {
-    preLoaders: [
-      {
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
-        loader: 'eslint-loader',
-        test: /\.js$/
-      }
-    ],
+  module: Object.assign({}, defaultConfig.module, {
+    rules: defaultConfig.module.rules.map((rule) => {
+      return rule.loader !== 'eslint-loader' ? rule : Object.assign({}, rule, {
+        options: Object.assign({}, rule.options, {
+          emitError: undefined,
+          failOnWarning: false
+        })
+      });
+    })
+  }),
 
-    loaders: [
-      {
-        include: [
-          path.resolve(__dirname, 'src'),
-          path.resolve(__dirname, 'DEV_ONLY')
-        ],
-        loader: 'babel',
-        query: {
-          presets: [
-            "react"
-          ]
-        },
-        test: /\.js$/
-      }
-    ]
-  },
+  output: Object.assign({}, defaultConfig.output, {
+    publicPath: `http://localhost:${PORT}/`
+  }),
 
-  node: {
-    fs: 'empty'
-  },
-
-  output: {
-    filename: 'react-pure-lifecycle.js',
-    library: 'ReactPureLifecycle',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: `http://localhost:${PORT}/`,
-    umdNamedDefine: true
-  },
-
-  plugins: [
-    new webpack.EnvironmentPlugin([
-      'NODE_ENV'
-    ]),
+  plugins: defaultConfig.plugins.concat([
     new HtmlWebpackPlugin(),
     new WebpackDashboard()
-  ],
-
-  resolve: {
-    extensions: [
-      '',
-      '.js'
-    ],
-
-    fallback: [
-      path.join(__dirname, 'src')
-    ],
-
-    root: __dirname
-  }
-};
+  ])
+});
