@@ -1,6 +1,7 @@
+import PropTypes from 'prop-types';
 import React, {
   Component,
-  PropTypes
+  PureComponent
 } from 'react';
 import {
   render
@@ -23,15 +24,17 @@ const componentDidUpdate = (...args) => {
 const options = {
   componentDidUpdate,
   shouldComponentUpdate,
-  componentWillUpdate: 'foo'
+  componentWillUpdate: 'foo',
+  baz() {},
+  isPure: true
 };
 
-const Div = ({children}, context) => {
+const Div = ({children}) => {
   return (
     <div>
       {children}
     </div>
-  )
+  );
 };
 
 Div.propTypes = {
@@ -53,7 +56,7 @@ const fn = (...args) => {
 };
 
 @lifecycle({componentDidUpdate: fn})
-class OtherDiv extends Component {
+class OtherDiv extends PureComponent {
   state = {
     foo: 'bar'
   };
@@ -68,6 +71,10 @@ class OtherDiv extends Component {
 }
 
 class App extends Component {
+  static propTypes = {
+    divText: PropTypes.string
+  };
+
   static childContextTypes = {
     bar: PropTypes.string
   };
@@ -99,24 +106,33 @@ class App extends Component {
   }
 }
 
-const renderApp = (divText) => {
+const renderApp = (container, divText) => {
   render((
     <App divText={divText}/>
-  ), div);
+  ), container);
 };
 
 const div = document.createElement('div');
 
 div.id = 'app-container';
+div.style.backgroundColor = '#1d1d1d';
+div.style.boxSizing = 'border-box';
+div.style.color = '#d5d5d5';
+div.style.height = '100vh';
+div.style.padding = '15px';
+div.style.width = '100vw';
+
+document.body.style.margin = 0;
+document.body.style.padding = 0;
 
 let counter = 0;
 
-renderApp(`Counter value: ${counter}`);
+renderApp(div, `Counter value: ${counter}`);
 
 setInterval(() => {
   counter++;
 
-  renderApp(`Counter value: ${counter}`);
+  renderApp(div, `Counter value: ${counter}`);
 }, 3000);
 
 document.body.appendChild(div);

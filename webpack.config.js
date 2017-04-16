@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 const webpack = require('webpack');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
@@ -5,24 +7,14 @@ const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 module.exports = {
   cache: true,
 
-  debug: true,
-
   devtool: 'source-map',
 
   entry: [
     path.resolve(__dirname, 'src', 'index.js')
   ],
 
-  eslint: {
-    configFile: '.eslintrc',
-    emitError: true,
-    failOnError: true,
-    failOnWarning: false,
-    formatter: require('eslint-friendly-formatter')
-  },
-
   externals: {
-    'react': {
+    react: {
       amd: 'react',
       commonjs: 'react',
       commonjs2: 'react',
@@ -31,26 +23,46 @@ module.exports = {
   },
 
   module: {
-    preLoaders: [
+    rules: [
       {
+        enforce: 'pre',
         include: [
           path.resolve(__dirname, 'src')
         ],
         loader: 'eslint-loader',
+        options: {
+          configFile: '.eslintrc',
+          emitError: true,
+          failOnError: true,
+          failOnWarning: true,
+          formatter: require('eslint-friendly-formatter')
+        },
         test: /\.js$/
-      }
-    ],
-
-    loaders: [
-      {
-        loader: 'json',
-        test: /\.json$/
       }, {
         include: [
           path.resolve(__dirname, 'src'),
           path.resolve(__dirname, 'DEV_ONLY')
         ],
-        loader: 'babel',
+        loader: 'babel-loader',
+        options: {
+          babelrc: false,
+          cacheDirectory: true,
+          plugins: [
+            'transform-decorators-legacy',
+            'add-module-exports'
+          ],
+          presets: [
+            ['env', {
+              loose: true,
+              modules: false,
+              targets: [
+                'ie 9'
+              ]
+            }],
+            'react',
+            'stage-2'
+          ]
+        },
         test: /\.js$/
       }
     ]
@@ -69,18 +81,5 @@ module.exports = {
       'NODE_ENV'
     ]),
     new LodashModuleReplacementPlugin()
-  ],
-
-  resolve: {
-    extensions: [
-      '',
-      '.js'
-    ],
-
-    fallback: [
-      path.join(__dirname, 'src')
-    ],
-
-    root: __dirname
-  }
+  ]
 };
