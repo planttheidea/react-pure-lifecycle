@@ -12,7 +12,10 @@ Add lifecycle methods to your functional components with purity
   * [Functional components](#functional-components)
   * [Class components](#class-components)
   * [Individual method decorators](#individual-method-decorators)
-* [Making functional components pure](#making-functional-components-pure)
+  * [Adding child context](#adding-child-context)
+* [Options](#options)
+  * [injectProps](#injectprops)
+  * [usePureComponent](#usepurecomponent)
 * [Development](#development)
 
 ### Installation
@@ -54,6 +57,8 @@ export default lifecycle(methods)(FunctionalComponent);
 ```
 
 The complete list of lifecycle methods are supported, minus `constructor` (if you want to fire something as early as possible, use `componentWillMount`). The first parameter passed to each lifecycle method is the component's current `props`, and then all standard parameters for that given lifecycle method follow. For a detailed explanation of each of the methods and the parameters they expect, [check the React documentation](https://facebook.github.io/react/docs/react-component.html#the-component-lifecycle).
+
+You can also add options to customize the use of the decorator, see [Options](#options) for more details.
 
 #### Class components
 
@@ -115,21 +120,68 @@ const FunctionalComponent = ({children}) => {
 export default shouldComponentUpdate(onlyUpdateIfChanged)(FunctionalComponent);
 ```
 
-If you pass `true` as the second parameter to any of these individual method decorators, it will make the component a `PureComponent` (see [Making functional components pure](#making-functional-components-pure) for more details).
+If you want to provide options to these specific method decorators, you can pass them as the second argument.
 
-### Making functional components pure
+#### Adding child context
 
-In addition to the methods passed, you can pass the `isPure` option, and functional components will have the same shallow-compare test that `PureComponent` has:
+In addition to providing the standard lifecycle methods, starting in `2.x.x` you can add child context to functional components (something normally `React` disallows). Example:
+
+```javascript
+import React from 'react';
+import PropTypes from 'prop-types';
+import lifecycle from 'react-pure-lifecycle';
+
+const methods = {
+  getChildContext(props) {
+    return {
+      foo: 'bar'
+    };
+  }
+};
+
+const Foo = () => {
+  return (
+    <div>
+      Hello!
+    </div>
+  );
+};
+
+Foo.childContextTypes = {
+  foo: PropTypes.string.isRequired
+};
+
+export default lifecycle(methods, options)(Foo);
+```
+
+Like standard lifecycle methods, this will also apply to components instantiated via the class method, with the only difference from standard behavior being the injection of the `props` argument.
+
+### Options
+
+Additional options can be passed as the second parameter to the decorator, with the following shape:
+
+```javascript
+{
+  injectProps: boolean, // should the component's props be injected as first argument (default: true)
+  usePureComponent: boolean // should the component rendered be a PureComponent (default: true)
+}
+```
+
+#### injectProps
+
+By default, all lifecycle methods will receive the component's current `props` as the first argument, and then all standard arguments for the given lifecycle method following. If you would like to disable this injection, set `injectProps` to `false`:
 
 ```javascript
 import React from 'react';
 import lifecycle from 'react-pure-lifecycle';
 
+const methods = {
+  componentDidUpdate(previousProps) {
+    console.log('Normally the first argument would be the currentProps,' previousProps);
+  }
+};
 const options = {
-  componentDidMount(props) {
-    console.log('Mounted with props: ', props)
-  },
-  isPure: true
+  injectProps: false
 };
 
 const Foo = () => {
@@ -140,19 +192,24 @@ const Foo = () => {
   );
 };
 
-export defailt lifecycle(options)(Foo);
+export default lifecycle(methods, options)(Foo);
 ```
 
-This will also apply if you pass `true` as the second parameter to any of the lifecycle-specific decorators:
+#### usePureComponent
+
+By default, functional components that have the decorator applied will use `PureComponent` as the foundation of the HOC, allowing for the same render-limiting performance optimizations that a `PureComponent` class has. If you would like to disable this and instead use the standard `Component` class for the HOC, set `usePureComponent` to `false`.
 
 ```javascript
 import React from 'react';
-import {
-  componentDidMount
-} from 'react-pure-lifecycle';
+import lifecycle from 'react-pure-lifecycle';
 
-const fn = (props) => {
-  console.log('Mounted with props: ', props)
+const methods = {
+  componentDidMount(props) {
+    console.log('Mounted with props: ', props)
+  }
+};
+const options = {
+  usePureComponent: false
 };
 
 const Foo = () => {
@@ -163,8 +220,10 @@ const Foo = () => {
   );
 };
 
-export defailt componentDidMount(fn, true)(Foo);
+export default lifecycle(methods, options)(Foo);
 ```
+
+Please note that this option will only affect functional components; if you apply the decorator to a standard component class, it will use the same component class that was decorated.
 
 ### Development
 

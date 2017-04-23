@@ -21,18 +21,38 @@ const componentDidUpdate = (...args) => {
   console.log(args);
 };
 
-const options = {
+const getChildContext = (props) => {
+  return {
+    baz: props.children.length
+  };
+};
+
+const methods = {
+  getChildContext,
   componentDidUpdate,
   shouldComponentUpdate,
   componentWillUpdate: 'foo',
-  baz() {},
-  isPure: true
+  baz() {}
+};
+
+const Span = (props, {baz}) => {
+  return (
+    <span>
+      &nbsp;({baz} characters in prior statement)
+    </span>
+  );
+};
+
+Span.contextTypes = {
+  baz: PropTypes.number
 };
 
 const Div = ({children}) => {
   return (
     <div>
       {children}
+
+      <Span/>
     </div>
   );
 };
@@ -45,11 +65,15 @@ Div.contextTypes = {
   bar: PropTypes.string
 };
 
+Div.childContextTypes = {
+  baz: PropTypes.number
+};
+
 Div.defaultProps = {
   children: []
 };
 
-const WrappedDiv = lifecycle(options)(Div);
+const WrappedDiv = lifecycle(methods)(Div);
 
 const fn = (...args) => {
   console.log(args);

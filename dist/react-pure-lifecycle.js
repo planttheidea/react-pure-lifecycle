@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("react")) : factory(root["React"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_0__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -78,17 +78,26 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
-
-/***/ }),
-/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return IS_PRODUCTION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LIFECYCLE_METHODS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DEFAULT_OPTIONS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return FUNCTION_NAME_REGEXP; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return IS_PRODUCTION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return LIFECYCLE_METHODS; });
+/**
+ * @constant {Object} DEFAULT_OPTIONS
+ */
+var DEFAULT_OPTIONS = {
+  injectProps: true,
+  usePureComponent: true
+};
+
+/**
+ * @constant {RegExp} FUNCTION_NAME_REGEXP
+ */
+var FUNCTION_NAME_REGEXP = /function ([^\(]+)?\(/;
+
 /**
  * @constant {boolean} IS_PRODUCTION
  * @default
@@ -99,6 +108,7 @@ var IS_PRODUCTION = "development" === 'production';
  * @constant {Object} LIFECYCLE_METHODS
  */
 var LIFECYCLE_METHODS = {
+  getChildContext: true,
   componentWillMount: true,
   componentDidMount: true,
   componentWillReceiveProps: true,
@@ -109,23 +119,23 @@ var LIFECYCLE_METHODS = {
 };
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_isFunction__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_isFunction___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash_isFunction__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__constants__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants__ = __webpack_require__(0);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return createSingleLifecycleMethodDecorator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return getComponentDisplayName; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return isReactClass; });
 /* unused harmony export isValidLifecycleMethodName */
 /* unused harmony export getInvalidMethodWarning */
+/* unused harmony export getLifecycleMethodWithPropsInjected */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return setLifecycleMethods; });
-// external dependencies
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+// external dependencies
 
 
 // constants
@@ -140,17 +150,17 @@ var LIFECYCLE_METHODS = {
  *
  * @param {function} method the method to add as a lifecycle method
  * @param {function} addMethods the method that will add the lifecycle methods to the component
- * @returns {function(ReactComponent, boolean): ReactComponent} the decorator for a specific method
+ * @returns {function(ReactComponent, Object): ReactComponent} the decorator for a specific method
  */
 var createSingleLifecycleMethodDecorator = function createSingleLifecycleMethodDecorator(method, addMethods) {
-  return function (fn, isPure) {
+  return function (fn, options) {
     var _addMethods;
 
     if (!__WEBPACK_IMPORTED_MODULE_0_lodash_isFunction___default()(fn)) {
       throw new TypeError('Parameter passed to ' + method + ' must be a function.');
     }
 
-    return addMethods((_addMethods = {}, _addMethods[method] = fn, _addMethods.isPure = isPure, _addMethods));
+    return addMethods((_addMethods = {}, _addMethods[method] = fn, _addMethods), options);
   };
 };
 
@@ -164,7 +174,7 @@ var createSingleLifecycleMethodDecorator = function createSingleLifecycleMethodD
  * @returns {string} the display name of ReactComponent
  */
 var getComponentDisplayName = function getComponentDisplayName(ReactComponent) {
-  var componentName = ReactComponent.displayName || ReactComponent.name || (/function ([^\(]+)?\(/.exec(ReactComponent.toString()) || [])[1] || 'Component';
+  var componentName = ReactComponent.displayName || ReactComponent.name || (__WEBPACK_IMPORTED_MODULE_1__constants__["c" /* FUNCTION_NAME_REGEXP */].exec(ReactComponent.toString()) || [])[1] || 'Component';
 
   return 'PureLifecycle(' + componentName + ')';
 };
@@ -179,7 +189,7 @@ var getComponentDisplayName = function getComponentDisplayName(ReactComponent) {
  * @returns {boolean} is ComponentToTest a react component instantiated via the class
  */
 var isReactClass = function isReactClass(ComponentToTest) {
-  return __WEBPACK_IMPORTED_MODULE_1_react__["Component"].isPrototypeOf(ComponentToTest) || __WEBPACK_IMPORTED_MODULE_1_react__["PureComponent"].isPrototypeOf(ComponentToTest);
+  return !!(ComponentToTest && ComponentToTest.prototype) && _typeof(ComponentToTest.prototype.isReactComponent) === 'object';
 };
 
 /**
@@ -189,10 +199,10 @@ var isReactClass = function isReactClass(ComponentToTest) {
  * is the methodName provided a valid lifecycle method name
  *
  * @param {string} methodName the name to check
- * @returns {boolean} is the methodName valid
+ * @returns {boolean|undefined} is the methodName valid
  */
 var isValidLifecycleMethodName = function isValidLifecycleMethodName(methodName) {
-  return !!__WEBPACK_IMPORTED_MODULE_2__constants__["a" /* LIFECYCLE_METHODS */][methodName];
+  return __WEBPACK_IMPORTED_MODULE_1__constants__["b" /* LIFECYCLE_METHODS */][methodName];
 };
 
 /**
@@ -209,32 +219,47 @@ var getInvalidMethodWarning = function getInvalidMethodWarning(methodName) {
 };
 
 /**
+ * @function getLifecycleMethodWithPropsInjected
+ *
+ * @description
+ * create a higher-order function that will inject the component's props as the first argument
+ *
+ * @param {ReactComponent} component the component whose props to retrieve
+ * @param {function} method the method to call
+ * @returns {function(...Array<*>): *} the higher-order function with props injected as argument
+ */
+var getLifecycleMethodWithPropsInjected = function getLifecycleMethodWithPropsInjected(component, method) {
+  return function () {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return method.apply(undefined, [component.props].concat(args));
+  };
+};
+
+/**
  * @function setLifecycleMethods
  *
  * @description
  * assign the lifecycle methods to the instance
  *
  * @param {ReactComponent} component the component whose methods will be augmented
- * @param {object} methods the methods to apply to the component
+ * @param {Object} methods the methods to apply to the component
+ * @param {boolean} injectProps should the props be injected as the method's first parameter
  * @returns {ReactComponent} the augmented component
  */
-var setLifecycleMethods = function setLifecycleMethods(component, methods) {
+var setLifecycleMethods = function setLifecycleMethods(component, methods, injectProps) {
   return Object.keys(methods).reduce(function (instance, methodName) {
     var method = methods[methodName];
 
     if (isValidLifecycleMethodName(methodName) && __WEBPACK_IMPORTED_MODULE_0_lodash_isFunction___default()(method)) {
-      instance[methodName] = function () {
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        return method.apply(undefined, [component.props].concat(args));
-      };
+      instance[methodName] = injectProps ? getLifecycleMethodWithPropsInjected(component, method) : method;
 
       return instance;
     }
 
-    if (!__WEBPACK_IMPORTED_MODULE_2__constants__["b" /* IS_PRODUCTION */]) {
+    if (!__WEBPACK_IMPORTED_MODULE_1__constants__["d" /* IS_PRODUCTION */]) {
       /* eslint-disable no-console */
       console.warn(getInvalidMethodWarning(methodName));
       /* eslint-enable */
@@ -245,7 +270,7 @@ var setLifecycleMethods = function setLifecycleMethods(component, methods) {
 };
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -273,6 +298,12 @@ module.exports = objectToString;
 
 
 /***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+/***/ }),
 /* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -280,11 +311,11 @@ module.exports = objectToString;
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_isPlainObject__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_isPlainObject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash_isPlainObject__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__constants__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__constants__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils__ = __webpack_require__(1);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "componentWillMount", function() { return componentWillMount; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "componentDidMount", function() { return componentDidMount; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "componentWillReceiveProps", function() { return componentWillReceiveProps; });
@@ -292,7 +323,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "componentWillUpdate", function() { return componentWillUpdate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "componentDidUpdate", function() { return componentDidUpdate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "componentWillUnmount", function() { return componentWillUnmount; });
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 // external dependencies
 
@@ -313,28 +344,30 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
  * @description
  * add the lifecycle hooks to the component and return it
  *
- * @param {Object} [options={}] the options passed
+ * @param {Object} [methods={}] the methods passed
+ * @param {Object} [optionsPassed={}] the options passed
  * @returns {function(PassedComponent: ReactComponent): ReactComponent} the component augmented with lifecycle methods
  */
 var addLifecycleMethods = function addLifecycleMethods() {
-  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var methods = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var optionsPassed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-  if (!__WEBPACK_IMPORTED_MODULE_0_lodash_isPlainObject___default()(options)) {
-    throw new TypeError('Options passed must be a plain object.');
+  if (!__WEBPACK_IMPORTED_MODULE_0_lodash_isPlainObject___default()(methods)) {
+    throw new TypeError('Methods passed must be in the form of a plain object.');
   }
 
-  var _options$isPure = options.isPure,
-      isPure = _options$isPure === undefined ? false : _options$isPure,
-      methods = _objectWithoutProperties(options, ['isPure']);
+  if (!__WEBPACK_IMPORTED_MODULE_0_lodash_isPlainObject___default()(optionsPassed)) {
+    throw new TypeError('Options passed must be in the form of a plain object.');
+  }
 
   return function (PassedComponent) {
     var getHoc = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils__["a" /* isReactClass */])(PassedComponent) ? __WEBPACK_IMPORTED_MODULE_2__components__["a" /* getClassHoc */] : __WEBPACK_IMPORTED_MODULE_2__components__["b" /* getFunctionHoc */];
 
-    return getHoc(PassedComponent, methods, isPure);
+    return getHoc(PassedComponent, methods, _extends({}, __WEBPACK_IMPORTED_MODULE_3__constants__["a" /* DEFAULT_OPTIONS */], optionsPassed));
   };
 };
 
-var _Object$keys$reduce = Object.keys(__WEBPACK_IMPORTED_MODULE_3__constants__["a" /* LIFECYCLE_METHODS */]).reduce(function (exportsObject, method) {
+var _Object$keys$reduce = Object.keys(__WEBPACK_IMPORTED_MODULE_3__constants__["b" /* LIFECYCLE_METHODS */]).reduce(function (exportsObject, method) {
   exportsObject[method] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils__["b" /* createSingleLifecycleMethodDecorator */])(method, addLifecycleMethods);
 
   return exportsObject;
@@ -362,9 +395,9 @@ var _Object$keys$reduce = Object.keys(__WEBPACK_IMPORTED_MODULE_3__constants__["
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(1);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return getClassHoc; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return getFunctionHoc; });
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -387,10 +420,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  *
  * @param {ReactComponent} PassedComponent the component to wrap in an HOC
  * @param {Object} methods the methods to apply to the HOC
+ * @param {Object} options the options for customizing implementation
+ * @param {boolean} options.injectProps should the props be injected into the lifecycle methods
  * @returns {ReactComponent} HOC inheriting from PassedComponent with lifecycle methods
  */
-var getClassHoc = function getClassHoc(PassedComponent, methods) {
+var getClassHoc = function getClassHoc(PassedComponent, methods, _ref) {
   var _class, _temp;
+
+  var injectProps = _ref.injectProps;
 
   var displayName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getComponentDisplayName */])(PassedComponent);
 
@@ -406,7 +443,7 @@ var getClassHoc = function getClassHoc(PassedComponent, methods) {
 
       var _this = _possibleConstructorReturn(this, _PassedComponent.call.apply(_PassedComponent, [this].concat(args)));
 
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setLifecycleMethods */])(_this, methods);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setLifecycleMethods */])(_this, methods, injectProps);
       return _this;
     }
 
@@ -426,14 +463,25 @@ var getClassHoc = function getClassHoc(PassedComponent, methods) {
  *
  * @param {ReactComponent} PassedComponent the component to wrap in an HOC
  * @param {Object} methods the methods to apply to the HOC
- * @param {boolean} isPure is the component pure or not
+ * @param {Object} options the options for customizing implementation
+ * @param {boolean} options.injectProps should the props be injected into the lifecycle methods
+ * @param {boolean} options.usePureComponent should the HOC be a PureComponent
  * @returns {ReactComponent} HOC wrapping PassedComponent with lifecycle methods
  */
-var getFunctionHoc = function getFunctionHoc(PassedComponent, methods, isPure) {
+var getFunctionHoc = function getFunctionHoc(PassedComponent, methods, _ref2) {
   var _class2, _temp2;
 
-  var ComponentToExtend = isPure ? __WEBPACK_IMPORTED_MODULE_0_react__["PureComponent"] : __WEBPACK_IMPORTED_MODULE_0_react__["Component"];
+  var injectProps = _ref2.injectProps,
+      usePureComponent = _ref2.usePureComponent;
+
+  var ComponentToExtend = usePureComponent ? __WEBPACK_IMPORTED_MODULE_0_react__["PureComponent"] : __WEBPACK_IMPORTED_MODULE_0_react__["Component"];
   var displayName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* getComponentDisplayName */])(PassedComponent);
+
+  var childContextTypes = PassedComponent.childContextTypes;
+
+  if (childContextTypes) {
+    delete PassedComponent.childContextTypes;
+  }
 
   return _temp2 = _class2 = function (_ComponentToExtend) {
     _inherits(PureLifecycleFunctional, _ComponentToExtend);
@@ -447,7 +495,7 @@ var getFunctionHoc = function getFunctionHoc(PassedComponent, methods, isPure) {
 
       var _this2 = _possibleConstructorReturn(this, _ComponentToExtend.call.apply(_ComponentToExtend, [this].concat(args)));
 
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setLifecycleMethods */])(_this2, methods);
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils__["d" /* setLifecycleMethods */])(_this2, methods, injectProps);
       return _this2;
     }
 
@@ -456,7 +504,7 @@ var getFunctionHoc = function getFunctionHoc(PassedComponent, methods, isPure) {
     };
 
     return PureLifecycleFunctional;
-  }(ComponentToExtend), _class2.contextTypes = PassedComponent.contextTypes, _class2.displayName = displayName, _class2.defaultProps = PassedComponent.defaultProps, _class2.propTypes = PassedComponent.propTypes, _temp2;
+  }(ComponentToExtend), _class2.childContextTypes = childContextTypes, _class2.contextTypes = PassedComponent.contextTypes, _class2.displayName = displayName, _class2.defaultProps = PassedComponent.defaultProps, _class2.propTypes = PassedComponent.propTypes, _temp2;
 };
 
 /***/ }),
@@ -496,7 +544,7 @@ module.exports = overArg;
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(3),
+var baseGetTag = __webpack_require__(2),
     isObject = __webpack_require__(9);
 
 /** `Object#toString` result references. */
@@ -611,7 +659,7 @@ module.exports = isObjectLike;
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(3),
+var baseGetTag = __webpack_require__(2),
     getPrototype = __webpack_require__(6),
     isObjectLike = __webpack_require__(10);
 
