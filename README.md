@@ -124,7 +124,7 @@ If you want to provide options to these specific method decorators, you can pass
 
 #### Adding child context
 
-In addition to providing the standard lifecycle methods, you can now add child context to functional components (something normally `React` disallows). Example:
+In addition to providing the standard lifecycle methods, starting in `2.x.x` you can add child context to functional components (something normally `React` disallows). Example:
 
 ```javascript
 import React from 'react';
