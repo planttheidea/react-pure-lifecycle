@@ -18,9 +18,11 @@ import {
  *
  * @param {ReactComponent} PassedComponent the component to wrap in an HOC
  * @param {Object} methods the methods to apply to the HOC
+ * @param {Object} options the options for customizing implementation
+ * @param {boolean} options.injectProps should the props be injected into the lifecycle methods
  * @returns {ReactComponent} HOC inheriting from PassedComponent with lifecycle methods
  */
-export const getClassHoc = (PassedComponent, methods) => {
+export const getClassHoc = (PassedComponent, methods, {injectProps}) => {
   const displayName = getComponentDisplayName(PassedComponent);
 
   return class PureLifecycleClass extends PassedComponent {
@@ -29,7 +31,7 @@ export const getClassHoc = (PassedComponent, methods) => {
     constructor(...args) {
       super(...args);
 
-      setLifecycleMethods(this, methods);
+      setLifecycleMethods(this, methods, injectProps);
     }
 
     render() {
@@ -46,14 +48,23 @@ export const getClassHoc = (PassedComponent, methods) => {
  *
  * @param {ReactComponent} PassedComponent the component to wrap in an HOC
  * @param {Object} methods the methods to apply to the HOC
- * @param {boolean} isPure is the component pure or not
+ * @param {Object} options the options for customizing implementation
+ * @param {boolean} options.injectProps should the props be injected into the lifecycle methods
+ * @param {boolean} options.usePureComponent should the HOC be a PureComponent
  * @returns {ReactComponent} HOC wrapping PassedComponent with lifecycle methods
  */
-export const getFunctionHoc = (PassedComponent, methods, isPure) => {
-  const ComponentToExtend = isPure ? PureComponent : Component;
+export const getFunctionHoc = (PassedComponent, methods, {injectProps, usePureComponent}) => {
+  const ComponentToExtend = usePureComponent ? PureComponent : Component;
   const displayName = getComponentDisplayName(PassedComponent);
 
+  const childContextTypes = PassedComponent.childContextTypes;
+
+  if (childContextTypes) {
+    delete PassedComponent.childContextTypes;
+  }
+
   return class PureLifecycleFunctional extends ComponentToExtend {
+    static childContextTypes = childContextTypes;
     static contextTypes = PassedComponent.contextTypes;
     static displayName = displayName;
     static defaultProps = PassedComponent.defaultProps;
@@ -62,7 +73,7 @@ export const getFunctionHoc = (PassedComponent, methods, isPure) => {
     constructor(...args) {
       super(...args);
 
-      setLifecycleMethods(this, methods);
+      setLifecycleMethods(this, methods, injectProps);
     }
 
     render() {

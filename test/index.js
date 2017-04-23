@@ -3,10 +3,11 @@ import {
   mount
 } from 'enzyme';
 import isFunction from 'lodash/isFunction';
+import PropTypes from 'prop-types';
 import React from 'react';
 import sinon from 'sinon';
 
-import addLifecycleHooks, {
+import addLifecycleMethods, {
   componentWillMount,
   componentDidMount,
   componentWillReceiveProps,
@@ -16,10 +17,6 @@ import addLifecycleHooks, {
   componentWillUnmount
 } from 'src/index';
 
-import {
-  LIFECYCLE_METHODS
-} from 'src/constants';
-
 const FunctionalComponent = ({counter}) => {
   return (
     <div>
@@ -28,7 +25,15 @@ const FunctionalComponent = ({counter}) => {
   );
 };
 
+FunctionalComponent.propTypes = {
+  counter: PropTypes.number
+};
+
 class ClassComponent extends React.Component {
+  static propTypes = {
+    counter: PropTypes.number
+  };
+
   render() {
     const {
       counter
@@ -42,29 +47,37 @@ class ClassComponent extends React.Component {
   }
 }
 
-test('if addLifecycleHooks returns a function', (t) => {
-  const result = addLifecycleHooks();
+test('if addLifecycleMethods returns a function', (t) => {
+  const result = addLifecycleMethods();
 
   t.true(isFunction(result));
 });
 
-test('if addLifecycleHooks throws when passed a non-object', (t) => {
+test('if addLifecycleMethods throws when passed a non-object for methods', (t) => {
   t.throws(() => {
-    addLifecycleHooks('foo');
+    addLifecycleMethods('foo');
   });
 });
 
-test('if addLifecycleHooks returns an HOC of the component passed', (t) => {
-  const result = addLifecycleHooks()(FunctionalComponent);
+test('if addLifecycleMethods throws when passed a non-object for options', (t) => {
+  t.throws(() => {
+    addLifecycleMethods({}, 'foo');
+  });
+});
+
+test('if addLifecycleMethods returns an HOC of the component passed', (t) => {
+  const result = addLifecycleMethods()(FunctionalComponent);
 
   t.true(isFunction(result));
 });
 
-test('if addLifecycleHooks returns the correct HOC based on the component type passed', (t) => {
-  const functionalResult = addLifecycleHooks()(FunctionalComponent);
-  const classResult = addLifecycleHooks()(ClassComponent);
+test('if addLifecycleMethods returns the correct HOC based on the component type passed', (t) => {
+  const functionalResult = addLifecycleMethods()(FunctionalComponent);
+  const impureFunctionalResult = addLifecycleMethods(undefined, {usePureComponent: false})(FunctionalComponent);
+  const classResult = addLifecycleMethods()(ClassComponent);
 
-  t.is(Object.getPrototypeOf(functionalResult), React.Component);
+  t.is(Object.getPrototypeOf(functionalResult), React.PureComponent);
+  t.is(Object.getPrototypeOf(impureFunctionalResult), React.Component);
   t.is(Object.getPrototypeOf(classResult), ClassComponent);
 });
 

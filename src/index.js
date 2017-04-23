@@ -10,6 +10,7 @@ import {
 
 // constants
 import {
+  DEFAULT_OPTIONS,
   LIFECYCLE_METHODS
 } from './constants';
 
@@ -25,23 +26,26 @@ import {
  * @description
  * add the lifecycle hooks to the component and return it
  *
- * @param {Object} [options={}] the options passed
+ * @param {Object} [methods={}] the methods passed
+ * @param {Object} [optionsPassed={}] the options passed
  * @returns {function(PassedComponent: ReactComponent): ReactComponent} the component augmented with lifecycle methods
  */
-const addLifecycleMethods = (options = {}) => {
-  if (!isPlainObject(options)) {
-    throw new TypeError('Options passed must be a plain object.');
+const addLifecycleMethods = (methods = {}, optionsPassed = {}) => {
+  if (!isPlainObject(methods)) {
+    throw new TypeError('Methods passed must be in the form of a plain object.');
   }
 
-  const {
-    isPure = false,
-    ...methods
-  } = options;
+  if (!isPlainObject(optionsPassed)) {
+    throw new TypeError('Options passed must be in the form of a plain object.');
+  }
 
   return (PassedComponent) => {
     const getHoc = isReactClass(PassedComponent) ? getClassHoc : getFunctionHoc;
 
-    return getHoc(PassedComponent, methods, isPure);
+    return getHoc(PassedComponent, methods, {
+      ...DEFAULT_OPTIONS,
+      ...optionsPassed
+    });
   };
 };
 

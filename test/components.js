@@ -13,6 +13,7 @@ import {
 // src
 import * as components from 'src/components';
 import {
+  DEFAULT_OPTIONS,
   LIFECYCLE_METHODS
 } from 'src/constants';
 
@@ -73,11 +74,11 @@ class Pure extends PureComponent {
  */
 const testIfLifecycleHookAdded = (t, method, ComponentToTest) => {
   const componentDidMount = sinon.stub();
-  const options = {
+  const methods = {
     componentDidMount
   };
 
-  const ComponentWithHooks = method(ComponentToTest, options);
+  const ComponentWithHooks = method(ComponentToTest, methods, DEFAULT_OPTIONS);
 
   mount(<ComponentWithHooks/>);
 
@@ -94,7 +95,7 @@ const testIfLifecycleHookAdded = (t, method, ComponentToTest) => {
 const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
   let passed = [];
 
-  const options = Object.keys(LIFECYCLE_METHODS).reduce((stubs, key) => {
+  const methods = Object.keys(LIFECYCLE_METHODS).reduce((stubs, key) => {
     return {
       ...stubs,
       [key]() {
@@ -105,7 +106,9 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
     };
   }, {});
 
-  const ComponentWithHooks = method(ComponentToTest, options);
+  delete methods.getChildContext;
+
+  const ComponentWithHooks = method(ComponentToTest, methods, DEFAULT_OPTIONS);
 
   const wrapper = mount(<ComponentWithHooks/>);
 
@@ -166,9 +169,12 @@ test('if getFunctionHoc will extend a standard class when isPure is false', (t) 
   const methods = {
     componentDidUpdate() {}
   };
-  const isPure = false;
+  const options = {
+    ...DEFAULT_OPTIONS,
+    usePureComponent: false
+  };
 
-  const Result = components.getFunctionHoc(Functional, methods, isPure);
+  const Result = components.getFunctionHoc(Functional, methods, options);
 
   t.true(Component.isPrototypeOf(Result));
   t.false(PureComponent.isPrototypeOf(Result));
@@ -178,10 +184,42 @@ test('if getFunctionHoc will extend a pure class when isPure is true', (t) => {
   const methods = {
     componentDidUpdate() {}
   };
-  const isPure = true;
 
-  const Result = components.getFunctionHoc(Functional, methods, isPure);
+  const Result = components.getFunctionHoc(Functional, methods, DEFAULT_OPTIONS);
 
   t.false(Component.isPrototypeOf(Result));
   t.true(PureComponent.isPrototypeOf(Result));
+});
+
+test('if getFunctionHoc will remove childContextTypes from the fn if it exists', (t) => {
+  const methods = {
+    getChildContext() {
+      return {
+        foo: 'bar'
+      };
+    }
+  };
+
+  const FunctionalWithChildContext = ({counter}) => {
+    return (
+      <div>
+        {counter}
+      </div>
+    );
+  };
+
+  FunctionalWithChildContext.propTypes = {
+    counter: PropTypes.number
+  };
+
+  const childContextTypes = {
+    foo: PropTypes.string
+  };
+
+  FunctionalWithChildContext.childContextTypes = childContextTypes;
+
+  const Result = components.getFunctionHoc(FunctionalWithChildContext, methods, DEFAULT_OPTIONS);
+
+  t.is(Result.childContextTypes, childContextTypes);
+  t.is(FunctionalWithChildContext.childContextTypes, undefined);
 });

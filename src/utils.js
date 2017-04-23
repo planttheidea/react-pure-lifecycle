@@ -1,12 +1,9 @@
 // external dependencies
 import isFunction from 'lodash/isFunction';
-import {
-  Component,
-  PureComponent
-} from 'react';
 
 // constants
 import {
+  FUNCTION_NAME_REGEXP,
   IS_PRODUCTION,
   LIFECYCLE_METHODS
 } from './constants';
@@ -20,18 +17,17 @@ import {
  *
  * @param {function} method the method to add as a lifecycle method
  * @param {function} addMethods the method that will add the lifecycle methods to the component
- * @returns {function(ReactComponent, boolean): ReactComponent} the decorator for a specific method
+ * @returns {function(ReactComponent, Object): ReactComponent} the decorator for a specific method
  */
 export const createSingleLifecycleMethodDecorator = (method, addMethods) => {
-  return (fn, isPure) => {
+  return (fn, options) => {
     if (!isFunction(fn)) {
       throw new TypeError(`Parameter passed to ${method} must be a function.`);
     }
 
     return addMethods({
-      [method]: fn,
-      isPure
-    });
+      [method]: fn
+    }, options);
   };
 };
 
@@ -46,7 +42,7 @@ export const createSingleLifecycleMethodDecorator = (method, addMethods) => {
  */
 export const getComponentDisplayName = (ReactComponent) => {
   const componentName = ReactComponent.displayName || ReactComponent.name ||
-    (/function ([^\(]+)?\(/.exec(ReactComponent.toString()) || [])[1] || 'Component';
+    (FUNCTION_NAME_REGEXP.exec(ReactComponent.toString()) || [])[1] || 'Component';
 
   return `PureLifecycle(${componentName})`;
 };
@@ -61,7 +57,7 @@ export const getComponentDisplayName = (ReactComponent) => {
  * @returns {boolean} is ComponentToTest a react component instantiated via the class
  */
 export const isReactClass = (ComponentToTest) => {
-  return Component.isPrototypeOf(ComponentToTest) || PureComponent.isPrototypeOf(ComponentToTest);
+  return !!(ComponentToTest && ComponentToTest.prototype) && typeof ComponentToTest.prototype.isReactComponent === 'object';
 };
 
 /**
@@ -71,10 +67,10 @@ export const isReactClass = (ComponentToTest) => {
  * is the methodName provided a valid lifecycle method name
  *
  * @param {string} methodName the name to check
- * @returns {boolean} is the methodName valid
+ * @returns {boolean|undefined} is the methodName valid
  */
 export const isValidLifecycleMethodName = (methodName) => {
-  return !!LIFECYCLE_METHODS[methodName];
+  return LIFECYCLE_METHODS[methodName];
 };
 
 /**
@@ -93,23 +89,38 @@ export const getInvalidMethodWarning = (methodName) => {
 };
 
 /**
+ * @function getLifecycleMethodWithPropsInjected
+ *
+ * @description
+ * create a higher-order function that will inject the component's props as the first argument
+ *
+ * @param {ReactComponent} component the component whose props to retrieve
+ * @param {function} method the method to call
+ * @returns {function(...Array<*>): *} the higher-order function with props injected as argument
+ */
+export const getLifecycleMethodWithPropsInjected = (component, method) => {
+  return (...args) => {
+    return method(component.props, ...args);
+  };
+};
+
+/**
  * @function setLifecycleMethods
  *
  * @description
  * assign the lifecycle methods to the instance
  *
  * @param {ReactComponent} component the component whose methods will be augmented
- * @param {object} methods the methods to apply to the component
+ * @param {Object} methods the methods to apply to the component
+ * @param {boolean} injectProps should the props be injected as the method's first parameter
  * @returns {ReactComponent} the augmented component
  */
-export const setLifecycleMethods = (component, methods) => {
+export const setLifecycleMethods = (component, methods, injectProps) => {
   return Object.keys(methods).reduce((instance, methodName) => {
     const method = methods[methodName];
 
     if (isValidLifecycleMethodName(methodName) && isFunction(method)) {
-      instance[methodName] = (...args) => {
-        return method(component.props, ...args);
-      };
+      instance[methodName] = injectProps ? getLifecycleMethodWithPropsInjected(component, method) : method;
 
       return instance;
     }
