@@ -1,9 +1,7 @@
 'use strict';
 
-const path = require('path');
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebpackDashboard = require('webpack-dashboard/plugin');
+const path = require('path');
 
 const defaultConfig = require('./webpack.config');
 
@@ -24,20 +22,20 @@ module.exports = Object.assign({}, defaultConfig, {
     }
   },
 
-  entry: [
-    path.resolve(__dirname, 'DEV_ONLY', 'App.js')
-  ],
+  entry: [path.resolve(__dirname, 'DEV_ONLY', 'App.js')],
 
   externals: undefined,
 
   module: Object.assign({}, defaultConfig.module, {
     rules: defaultConfig.module.rules.map((rule) => {
-      return rule.loader !== 'eslint-loader' ? rule : Object.assign({}, rule, {
-        options: Object.assign({}, rule.options, {
-          emitError: undefined,
-          failOnWarning: false
-        })
-      });
+      return rule.loader !== 'eslint-loader'
+        ? rule
+        : Object.assign({}, rule, {
+          options: Object.assign({}, rule.options, {
+            emitError: undefined,
+            failOnWarning: false
+          })
+        });
     })
   }),
 
@@ -45,8 +43,5 @@ module.exports = Object.assign({}, defaultConfig, {
     publicPath: `http://localhost:${PORT}/`
   }),
 
-  plugins: defaultConfig.plugins.concat([
-    new HtmlWebpackPlugin(),
-    new WebpackDashboard()
-  ])
+  plugins: defaultConfig.plugins.concat([new HtmlWebpackPlugin()])
 });

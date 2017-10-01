@@ -2,11 +2,7 @@
 import isFunction from 'lodash/isFunction';
 
 // constants
-import {
-  FUNCTION_NAME_REGEXP,
-  IS_PRODUCTION,
-  LIFECYCLE_METHODS
-} from './constants';
+import {FUNCTION_NAME_REGEXP, IS_PRODUCTION, LIFECYCLE_METHODS} from './constants';
 
 /**
  * @function createSingleLifecycleMethodDecorator
@@ -25,9 +21,12 @@ export const createSingleLifecycleMethodDecorator = (method, addMethods) => {
       throw new TypeError(`Parameter passed to ${method} must be a function.`);
     }
 
-    return addMethods({
-      [method]: fn
-    }, options);
+    return addMethods(
+      {
+        [method]: fn
+      },
+      options
+    );
   };
 };
 
@@ -41,8 +40,11 @@ export const createSingleLifecycleMethodDecorator = (method, addMethods) => {
  * @returns {string} the display name of ReactComponent
  */
 export const getComponentDisplayName = (ReactComponent) => {
-  const componentName = ReactComponent.displayName || ReactComponent.name ||
-    (FUNCTION_NAME_REGEXP.exec(ReactComponent.toString()) || [])[1] || 'Component';
+  const componentName =
+    ReactComponent.displayName ||
+    ReactComponent.name ||
+    (FUNCTION_NAME_REGEXP.exec(ReactComponent.toString()) || [])[1] ||
+    'Component';
 
   return `PureLifecycle(${componentName})`;
 };
@@ -57,20 +59,9 @@ export const getComponentDisplayName = (ReactComponent) => {
  * @returns {boolean} is ComponentToTest a react component instantiated via the class
  */
 export const isReactClass = (ComponentToTest) => {
-  return !!(ComponentToTest && ComponentToTest.prototype) && typeof ComponentToTest.prototype.isReactComponent === 'object';
-};
-
-/**
- * @function isValidLifecycleMethodName
- *
- * @description
- * is the methodName provided a valid lifecycle method name
- *
- * @param {string} methodName the name to check
- * @returns {boolean|undefined} is the methodName valid
- */
-export const isValidLifecycleMethodName = (methodName) => {
-  return LIFECYCLE_METHODS[methodName];
+  return (
+    !!(ComponentToTest && ComponentToTest.prototype) && typeof ComponentToTest.prototype.isReactComponent === 'object'
+  );
 };
 
 /**
@@ -83,9 +74,9 @@ export const isValidLifecycleMethodName = (methodName) => {
  * @returns {string} the message to display in the warning
  */
 export const getInvalidMethodWarning = (methodName) => {
-  return isValidLifecycleMethodName(methodName) ?
-    `The value passed for ${methodName} is not a function, skipping.` :
-    `The key ${methodName} is not a valid lifecycle method, skipping.`;
+  return LIFECYCLE_METHODS[methodName]
+    ? `The value passed for ${methodName} is not a function, skipping.`
+    : `The key ${methodName} is not a valid lifecycle method, skipping.`;
 };
 
 /**
@@ -119,13 +110,9 @@ export const setLifecycleMethods = (component, methods, injectProps) => {
   return Object.keys(methods).reduce((instance, methodName) => {
     const method = methods[methodName];
 
-    if (isValidLifecycleMethodName(methodName) && isFunction(method)) {
+    if (LIFECYCLE_METHODS[methodName] && isFunction(method)) {
       instance[methodName] = injectProps ? getLifecycleMethodWithPropsInjected(component, method) : method;
-
-      return instance;
-    }
-
-    if (!IS_PRODUCTION) {
+    } else if (!IS_PRODUCTION) {
       /* eslint-disable no-console */
       console.warn(getInvalidMethodWarning(methodName));
       /* eslint-enable */

@@ -1,24 +1,19 @@
 import PropTypes from 'prop-types';
-import React, {
-  Component,
-  PureComponent
-} from 'react';
-import {
-  render
-} from 'react-dom';
+import React, {Component, PureComponent} from 'react';
+import {render} from 'react-dom';
 
 import lifecycle from '../src';
 
 const shouldComponentUpdate = (props, nextProps) => {
   const counterValue = parseInt(nextProps.children.replace('Counter value: ', ''), 10);
 
-  console.log(counterValue);
+  console.log('counter', counterValue);
 
   return counterValue % 2 === 0;
 };
 
 const componentDidUpdate = (...args) => {
-  console.log(args);
+  console.log('update', args);
 };
 
 const getChildContext = (props) => {
@@ -36,11 +31,7 @@ const methods = {
 };
 
 const Span = (props, {baz}) => {
-  return (
-    <span>
-      &nbsp;({baz} characters in prior statement)
-    </span>
-  );
+  return <span>&nbsp;({baz} characters in prior statement)</span>;
 };
 
 Span.contextTypes = {
@@ -52,7 +43,7 @@ const Div = ({children}) => {
     <div>
       {children}
 
-      <Span/>
+      <Span />
     </div>
   );
 };
@@ -73,7 +64,7 @@ Div.defaultProps = {
   children: []
 };
 
-const WrappedDiv = lifecycle(methods)(Div);
+const WrappedDiv = lifecycle(methods, {usePureComponent: false})(Div);
 
 const fn = (...args) => {
   console.log(args);
@@ -86,11 +77,7 @@ class OtherDiv extends PureComponent {
   };
 
   render() {
-    return (
-      <div>
-        foo
-      </div>
-    );
+    return <div>foo</div>;
   }
 }
 
@@ -110,30 +97,22 @@ class App extends Component {
   }
 
   render() {
-    const {
-      divText
-    } = this.props;
+    const {divText} = this.props;
 
     return (
       <div>
-        <h1>
-          App
-        </h1>
+        <h1>App</h1>
 
-        <WrappedDiv>
-          {divText}
-        </WrappedDiv>
+        <WrappedDiv>{divText}</WrappedDiv>
 
-        <OtherDiv foo={divText}/>
+        <OtherDiv foo={divText} />
       </div>
     );
   }
 }
 
 const renderApp = (container, divText) => {
-  render((
-    <App divText={divText}/>
-  ), container);
+  render(<App divText={divText} />, container);
 };
 
 const div = document.createElement('div');

@@ -3,22 +3,13 @@ import isPlainObject from 'lodash/isPlainObject';
 import React from 'react';
 
 //components
-import {
-  getClassHoc,
-  getFunctionHoc
-} from './components';
+import {getClassHoc, getFunctionHoc} from './components';
 
 // constants
-import {
-  DEFAULT_OPTIONS,
-  LIFECYCLE_METHODS
-} from './constants';
+import {DEFAULT_OPTIONS, LIFECYCLE_METHODS} from './constants';
 
 // utils
-import {
-  createSingleLifecycleMethodDecorator,
-  isReactClass
-} from './utils';
+import {createSingleLifecycleMethodDecorator, isReactClass} from './utils';
 
 /**
  * @function addLifecycleMethods
