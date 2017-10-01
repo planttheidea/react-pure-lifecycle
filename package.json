@@ -3,8 +3,15 @@
   "ava": {
     "babel": "inherit",
     "failFast": true,
-    "files": ["!test/helpers/*.js", "test/*.js"],
-    "require": ["babel-register", "babel-polyfill", "test/helpers/setup-browser-env.js"],
+    "files": [
+      "!test/helpers/*.js",
+      "test/*.js"
+    ],
+    "require": [
+      "babel-register",
+      "babel-polyfill",
+      "test/helpers/setup-browser-env.js"
+    ],
     "verbose": true
   },
   "bugs": {
@@ -49,7 +56,11 @@
     "webpack-dev-server": "^2.9.1"
   },
   "homepage": "https://github.com/planttheidea/react-pure-lifecycle#readme",
-  "keywords": ["react", "lifecycle", "functional"],
+  "keywords": [
+    "react",
+    "lifecycle",
+    "functional"
+  ],
   "license": "MIT",
   "main": "lib/index.js",
   "name": "react-pure-lifecycle",
@@ -64,13 +75,12 @@
     "dev": "NODE_ENV=development webpack-dev-server --progress --colors --config=webpack.config.dev.js",
     "lint": "NODE_ENV=test eslint src",
     "prepublish": "if in-publish; then npm run prepublish:compile; fi",
-    "prepublish:compile":
-      "npm run lint && npm run test:coverage && npm run clean && npm run transpile && npm run build && npm run build:minified",
+    "prepublish:compile": "npm run lint && npm run test:coverage && npm run clean && npm run transpile && npm run build && npm run build:minified",
     "start": "npm run dev",
     "test": "NODE_PATH=.:src NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",
     "test:watch": "NODE_PATH=.:src NODE_ENV=test ava --watch",
     "transpile": "babel src --out-dir lib --copy-files"
   },
-  "version": "2.0.0"
+  "version": "2.1.0"
 }
