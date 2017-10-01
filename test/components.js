@@ -1,28 +1,16 @@
 // test
 import test from 'ava';
 import PropTypes from 'prop-types';
-import React, {
-  Component,
-  PureComponent
-} from 'react';
+import React, {Component, PureComponent} from 'react';
 import sinon from 'sinon';
-import {
-  mount
-} from 'enzyme';
+import {mount} from 'enzyme';
 
 // src
 import * as components from 'src/components';
-import {
-  DEFAULT_OPTIONS,
-  LIFECYCLE_METHODS
-} from 'src/constants';
+import {DEFAULT_OPTIONS, LIFECYCLE_METHODS} from 'src/constants';
 
 const Functional = ({counter}) => {
-  return (
-    <div>
-      {counter}
-    </div>
-  );
+  return <div>{counter}</div>;
 };
 
 Functional.propTypes = {
@@ -35,15 +23,9 @@ class Standard extends Component {
   };
 
   render() {
-    const {
-      counter
-    } = this.props;
+    const {counter} = this.props;
 
-    return (
-      <div>
-        {counter}
-      </div>
-    );
+    return <div>{counter}</div>;
   }
 }
 
@@ -53,15 +35,9 @@ class Pure extends PureComponent {
   };
 
   render() {
-    const {
-      counter
-    } = this.props;
+    const {counter} = this.props;
 
-    return (
-      <div>
-        {counter}
-      </div>
-    );
+    return <div>{counter}</div>;
   }
 }
 
@@ -80,7 +56,7 @@ const testIfLifecycleHookAdded = (t, method, ComponentToTest) => {
 
   const ComponentWithHooks = method(ComponentToTest, methods, DEFAULT_OPTIONS);
 
-  mount(<ComponentWithHooks/>);
+  mount(<ComponentWithHooks />);
 
   t.true(componentDidMount.calledOnce);
 };
@@ -108,14 +84,14 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
 
   delete methods.getChildContext;
 
-  const ComponentWithHooks = method(ComponentToTest, methods, DEFAULT_OPTIONS);
+  const ComponentWithHooks = method(ComponentToTest, methods, {
+    ...DEFAULT_OPTIONS,
+    usePureComponent: false
+  });
 
-  const wrapper = mount(<ComponentWithHooks/>);
+  const wrapper = mount(<ComponentWithHooks />);
 
-  const expectedMountResult = [
-    'componentWillMount',
-    'componentDidMount'
-  ];
+  const expectedMountResult = ['componentWillMount', 'componentDidMount'];
 
   t.deepEqual(passed, expectedMountResult);
 
@@ -135,10 +111,7 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
 
   wrapper.unmount();
 
-  t.deepEqual(passed, [
-    ...expectedUpdateResult,
-    'componentWillUnmount'
-  ]);
+  t.deepEqual(passed, [...expectedUpdateResult, 'componentWillUnmount']);
 };
 
 test('if getFunctionHoc will add a lifecycle hook to the component passed', (t) => {
@@ -153,15 +126,15 @@ test('if getClassHoc will add a lifecycle hook to the pure component passed', (t
   testIfLifecycleHookAdded(t, components.getClassHoc, Pure);
 });
 
-test('if getFunctionHoc will add all lifecycle hooks and fire in order', (t) => {
+test('if getFunctionHoc will add all lifecycle hooks and fire in order for a functional component', (t) => {
   testIfLifecycleHooksFireInOrder(t, components.getFunctionHoc, Functional);
 });
 
-test('if getClassHoc will add all lifecycle hooks and fire in order', (t) => {
+test('if getClassHoc will add all lifecycle hooks and fire in order for a standard component', (t) => {
   testIfLifecycleHooksFireInOrder(t, components.getClassHoc, Standard);
 });
 
-test('if getClassHoc will add all lifecycle hooks and fire in order', (t) => {
+test('if getClassHoc will add all lifecycle hooks and fire in order for a pure component', (t) => {
   testIfLifecycleHooksFireInOrder(t, components.getClassHoc, Pure);
 });
 
@@ -201,11 +174,7 @@ test('if getFunctionHoc will remove childContextTypes from the fn if it exists',
   };
 
   const FunctionalWithChildContext = ({counter}) => {
-    return (
-      <div>
-        {counter}
-      </div>
-    );
+    return <div>{counter}</div>;
   };
 
   FunctionalWithChildContext.propTypes = {
@@ -220,6 +189,6 @@ test('if getFunctionHoc will remove childContextTypes from the fn if it exists',
 
   const Result = components.getFunctionHoc(FunctionalWithChildContext, methods, DEFAULT_OPTIONS);
 
-  t.is(Result.childContextTypes, childContextTypes);
+  t.deepEqual(Result.childContextTypes, childContextTypes);
   t.is(FunctionalWithChildContext.childContextTypes, undefined);
 });

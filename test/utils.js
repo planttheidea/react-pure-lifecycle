@@ -1,17 +1,12 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
-import React, {
-  Component,
-  PureComponent
-} from 'react';
+import React, {Component, PureComponent} from 'react';
 import sinon from 'sinon';
 
 // src
 import * as utils from 'src/utils';
-import {
-  DEFAULT_OPTIONS
-} from 'src/constants';
+import {DEFAULT_OPTIONS} from 'src/constants';
 
 test('if createSingleLifecycleMethodDecorator returns a function', (t) => {
   const result = utils.createSingleLifecycleMethodDecorator();
@@ -117,18 +112,14 @@ test('if getInvalidMethodWarning will get the right warning message for a non-li
 
 test.serial('if isReactClass will check if the item passed has Component or PureComponent as an ancestor', (t) => {
   const Functional = () => {
-    return (
-      <div/>
-    );
+    return <div />;
   };
 
   t.false(utils.isReactClass(Functional));
 
   class Standard extends Component {
     render() {
-      return (
-        <div/>
-      );
+      return <div />;
     }
   }
 
@@ -136,52 +127,53 @@ test.serial('if isReactClass will check if the item passed has Component or Pure
 
   class Pure extends PureComponent {
     render() {
-      return (
-        <div/>
-      );
+      return <div />;
     }
   }
 
   t.true(utils.isReactClass(Pure));
 });
 
-test('if isValidLifecycleMethodName checks the object for the methodName', (t) => {
-  const validMethodName = 'componentDidMount';
-  const invalidMethodName = 'foo';
+test(
+  'if setLifecycleMethods will only add the method when the item is a valid key from LIFECYCLE_METHODS, ' +
+    'otherwise fires a warning',
+  (t) => {
+    const invalidComponent = {};
+    const invalidMethod = 'foo';
+    const validMethod = 'componentDidMount';
 
-  t.true(utils.isValidLifecycleMethodName(validMethodName));
-  t.falsy(utils.isValidLifecycleMethodName(invalidMethodName));
-});
+    const validComponent = {};
+    const invalidStub = sinon.stub();
+    const validStub = sinon.stub();
 
-test('if setLifecycleMethods will only add the method when the item is a valid key from LIFECYCLE_METHODS, ' +
-  'otherwise fires a warning', (t) => {
-  const invalidComponent = {};
-  const invalidMethod = 'foo';
-  const validMethod = 'componentDidMount';
+    const stub = sinon.stub(global.console, 'warn');
 
-  const validComponent = {};
-  const invalidStub = sinon.stub();
-  const validStub = sinon.stub();
+    const invalidResult = utils.setLifecycleMethods(
+      invalidComponent,
+      {
+        [invalidMethod]: invalidStub
+      },
+      DEFAULT_OPTIONS.injectProps
+    );
+    const invalidExpectedResult = {};
 
-  const stub = sinon.stub(global.console, 'warn');
+    t.deepEqual(invalidResult, invalidExpectedResult);
+    t.true(stub.calledOnce);
 
-  const invalidResult = utils.setLifecycleMethods(invalidComponent, {
-    [invalidMethod]: invalidStub
-  }, DEFAULT_OPTIONS.injectProps);
-  const invalidExpectedResult = {};
+    stub.restore();
 
-  t.deepEqual(invalidResult, invalidExpectedResult);
-  t.true(stub.calledOnce);
+    const validResult = utils.setLifecycleMethods(
+      validComponent,
+      {
+        [validMethod]: validStub
+      },
+      DEFAULT_OPTIONS.injectProps
+    );
 
-  stub.restore();
-
-  const validResult = utils.setLifecycleMethods(validComponent, {
-    [validMethod]: validStub
-  }, DEFAULT_OPTIONS.injectProps);
-
-  t.true(validResult.hasOwnProperty(validMethod));
-  t.true(_.isFunction(validResult[validMethod]));
-});
+    t.true(validResult.hasOwnProperty(validMethod));
+    t.true(_.isFunction(validResult[validMethod]));
+  }
+);
 
 test('if setLifecycleMethods will fire a warning to the console if the method is valid but is not a function', (t) => {
   const component = {};
@@ -190,9 +182,13 @@ test('if setLifecycleMethods will fire a warning to the console if the method is
 
   const stub = sinon.stub(global.console, 'warn');
 
-  utils.setLifecycleMethods(component, {
-    [method]: value
-  }, DEFAULT_OPTIONS.injectProps);
+  utils.setLifecycleMethods(
+    component,
+    {
+      [method]: value
+    },
+    DEFAULT_OPTIONS.injectProps
+  );
 
   t.true(stub.calledOnce);
 
@@ -204,9 +200,13 @@ test('if setLifecycleMethods will add the method directly instead of a wrapper i
   const method = 'componentDidMount';
   const value = sinon.spy();
 
-  utils.setLifecycleMethods(component, {
-    [method]: value
-  }, false);
+  utils.setLifecycleMethods(
+    component,
+    {
+      [method]: value
+    },
+    false
+  );
 
   t.is(component[method], value);
 });
@@ -218,9 +218,13 @@ test('if setLifecycleMethods will add the wrapper method if injectProps is false
   const method = 'componentDidMount';
   const value = sinon.spy();
 
-  utils.setLifecycleMethods(component, {
-    [method]: value
-  }, true);
+  utils.setLifecycleMethods(
+    component,
+    {
+      [method]: value
+    },
+    true
+  );
 
   t.not(component[method], value);
 

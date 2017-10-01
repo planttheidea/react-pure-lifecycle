@@ -1,14 +1,8 @@
 // external dependencies
-import React, {
-  Component,
-  PureComponent
-} from 'react';
+import React, {Component, PureComponent} from 'react';
 
 // utils
-import {
-  getComponentDisplayName,
-  setLifecycleMethods
-} from './utils';
+import {getComponentDisplayName, setLifecycleMethods} from './utils';
 
 /**
  * @function getClassHoc
@@ -47,28 +41,31 @@ export const getClassHoc = (PassedComponent, methods, {injectProps}) => {
  * for function-based components, use a props proxy wrapper and add the lifecycle methods
  *
  * @param {ReactComponent} PassedComponent the component to wrap in an HOC
- * @param {Object} methods the methods to apply to the HOC
+ * @param {Object} passedMethods the methods to apply to the HOC
  * @param {Object} options the options for customizing implementation
  * @param {boolean} options.injectProps should the props be injected into the lifecycle methods
  * @param {boolean} options.usePureComponent should the HOC be a PureComponent
  * @returns {ReactComponent} HOC wrapping PassedComponent with lifecycle methods
  */
-export const getFunctionHoc = (PassedComponent, methods, {injectProps, usePureComponent}) => {
+export const getFunctionHoc = (PassedComponent, passedMethods, {injectProps, usePureComponent}) => {
   const ComponentToExtend = usePureComponent ? PureComponent : Component;
   const displayName = getComponentDisplayName(PassedComponent);
 
-  const childContextTypes = PassedComponent.childContextTypes;
+  const methods = {...passedMethods};
+  const childContextTypes = PassedComponent.childContextTypes ? {...PassedComponent.childContextTypes} : undefined;
 
   if (childContextTypes) {
     delete PassedComponent.childContextTypes;
   }
 
   return class PureLifecycleFunctional extends ComponentToExtend {
-    static childContextTypes = childContextTypes;
-    static contextTypes = PassedComponent.contextTypes;
     static displayName = displayName;
-    static defaultProps = PassedComponent.defaultProps;
+
     static propTypes = PassedComponent.propTypes;
+    static defaultProps = PassedComponent.defaultProps;
+
+    static contextTypes = PassedComponent.contextTypes;
+    static childContextTypes = childContextTypes;
 
     constructor(...args) {
       super(...args);
@@ -77,9 +74,7 @@ export const getFunctionHoc = (PassedComponent, methods, {injectProps, usePureCo
     }
 
     render() {
-      return (
-        <PassedComponent {...this.props}/>
-      );
+      return <PassedComponent {...this.props} />;
     }
   };
 };

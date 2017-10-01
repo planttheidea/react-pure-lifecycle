@@ -1,7 +1,6 @@
+// test
 import test from 'ava';
-import {
-  mount
-} from 'enzyme';
+import {mount} from 'enzyme';
 import isFunction from 'lodash/isFunction';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -18,11 +17,7 @@ import addLifecycleMethods, {
 } from 'src/index';
 
 const FunctionalComponent = ({counter}) => {
-  return (
-    <div>
-      {counter}
-    </div>
-  );
+  return <div>{counter}</div>;
 };
 
 FunctionalComponent.propTypes = {
@@ -35,15 +30,9 @@ class ClassComponent extends React.Component {
   };
 
   render() {
-    const {
-      counter
-    } = this.props;
+    const {counter} = this.props;
 
-    return (
-      <div>
-        {counter}
-      </div>
-    );
+    return <div>{counter}</div>;
   }
 }
 
@@ -87,7 +76,7 @@ test('if componentWillMount-specific decorator will fire', (t) => {
 
   const DecoratedComponent = decorator(FunctionalComponent);
 
-  mount(<DecoratedComponent/>);
+  mount(<DecoratedComponent />);
 
   t.true(stub.calledOnce);
 });
@@ -98,7 +87,7 @@ test('if componentDidMount-specific decorator will fire', (t) => {
 
   const DecoratedComponent = decorator(FunctionalComponent);
 
-  mount(<DecoratedComponent/>);
+  mount(<DecoratedComponent />);
 
   t.true(stub.calledOnce);
 });
@@ -109,7 +98,7 @@ test('if componentWillReceiveProps-specific decorator will fire', (t) => {
 
   const DecoratedComponent = decorator(FunctionalComponent);
 
-  const wrapper = mount(<DecoratedComponent/>);
+  const wrapper = mount(<DecoratedComponent />);
 
   t.false(stub.called);
 
@@ -122,13 +111,13 @@ test('if componentWillReceiveProps-specific decorator will fire', (t) => {
 
 test('if shouldComponentUpdate-specific decorator will fire', (t) => {
   const stub = sinon.stub();
-  const decorator = shouldComponentUpdate(stub);
+  const decorator = shouldComponentUpdate(stub, {usePureComponent: false});
 
   stub.returns(true);
 
   const DecoratedComponent = decorator(FunctionalComponent);
 
-  const wrapper = mount(<DecoratedComponent/>);
+  const wrapper = mount(<DecoratedComponent />);
 
   t.false(stub.called);
 
@@ -145,7 +134,7 @@ test('if componentWillUpdate-specific decorator will fire', (t) => {
 
   const DecoratedComponent = decorator(FunctionalComponent);
 
-  const wrapper = mount(<DecoratedComponent/>);
+  const wrapper = mount(<DecoratedComponent />);
 
   t.false(stub.called);
 
@@ -162,7 +151,7 @@ test('if componentDidUpdate-specific decorator will fire', (t) => {
 
   const DecoratedComponent = decorator(FunctionalComponent);
 
-  const wrapper = mount(<DecoratedComponent/>);
+  const wrapper = mount(<DecoratedComponent />);
 
   t.false(stub.called);
 
@@ -179,7 +168,7 @@ test('if componentWillUnmount-specific decorator will fire', (t) => {
 
   const DecoratedComponent = decorator(FunctionalComponent);
 
-  const wrapper = mount(<DecoratedComponent/>);
+  const wrapper = mount(<DecoratedComponent />);
 
   t.false(stub.called);
 
