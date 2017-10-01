@@ -1,5 +1,9 @@
 # react-pure-lifecycle CHANGELOG
 
+#### 2.1.0
+* Add support for `react` 16
+* Fix `childContextTypes` being assigned an object even if not provided
+
 #### 2.0.0
 * BREAKING CHANGES:
   * The second parameter in `1.1.0` was a boolean, to denote if `PureComponent` should be used for the HOC; this has been replaced with an object of options (see [the README](README.md#options) for more details)
