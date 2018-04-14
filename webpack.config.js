@@ -9,9 +9,7 @@ module.exports = {
 
   devtool: 'source-map',
 
-  entry: [
-    path.resolve(__dirname, 'src', 'index.js')
-  ],
+  entry: [path.resolve(__dirname, 'src', 'index.js')],
 
   externals: {
     react: {
@@ -22,13 +20,13 @@ module.exports = {
     }
   },
 
+  mode: 'development',
+
   module: {
     rules: [
       {
         enforce: 'pre',
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
+        include: [path.resolve(__dirname, 'src')],
         loader: 'eslint-loader',
         options: {
           configFile: '.eslintrc',
@@ -38,27 +36,23 @@ module.exports = {
           formatter: require('eslint-friendly-formatter')
         },
         test: /\.js$/
-      }, {
-        include: [
-          path.resolve(__dirname, 'src'),
-          path.resolve(__dirname, 'DEV_ONLY')
-        ],
+      },
+      {
+        include: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'DEV_ONLY')],
         loader: 'babel-loader',
         options: {
           babelrc: false,
           cacheDirectory: true,
-          plugins: [
-            'transform-decorators-legacy',
-            'add-module-exports'
-          ],
+          plugins: ['transform-decorators-legacy', 'add-module-exports'],
           presets: [
-            ['env', {
-              loose: true,
-              modules: false,
-              targets: [
-                'ie 9'
-              ]
-            }],
+            [
+              'env',
+              {
+                loose: true,
+                modules: false,
+                targets: ['ie 9']
+              }
+            ],
             'react',
             'stage-2'
           ]
@@ -76,10 +70,5 @@ module.exports = {
     umdNamedDefine: true
   },
 
-  plugins: [
-    new webpack.EnvironmentPlugin([
-      'NODE_ENV'
-    ]),
-    new LodashModuleReplacementPlugin()
-  ]
+  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV']), new LodashModuleReplacementPlugin()]
 };

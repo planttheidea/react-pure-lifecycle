@@ -9,6 +9,10 @@ import {mount} from 'enzyme';
 import * as components from 'src/components';
 import {DEFAULT_OPTIONS, LIFECYCLE_METHODS} from 'src/constants';
 
+const MODERN_LIFECYCLE_METHODS = Object.keys(LIFECYCLE_METHODS).reduce((methods, key) => {
+  return LIFECYCLE_METHODS[`UNSAFE_${key}`] ? methods : methods.concat([key]);
+}, []);
+
 const Functional = ({counter}) => {
   return <div>{counter}</div>;
 };
@@ -71,7 +75,11 @@ const testIfLifecycleHookAdded = (t, method, ComponentToTest) => {
 const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
   let passed = [];
 
-  const methods = Object.keys(LIFECYCLE_METHODS).reduce((stubs, key) => {
+  const methods = MODERN_LIFECYCLE_METHODS.reduce((stubs, key) => {
+    if (key === 'getSnapshotBeforeUpdate') {
+      return stubs;
+    }
+
     return {
       ...stubs,
       [key]() {
@@ -91,7 +99,7 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
 
   const wrapper = mount(<ComponentWithHooks />);
 
-  const expectedMountResult = ['componentWillMount', 'componentDidMount'];
+  const expectedMountResult = ['UNSAFE_componentWillMount', 'componentDidMount'];
 
   t.deepEqual(passed, expectedMountResult);
 
@@ -101,9 +109,9 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
 
   const expectedUpdateResult = [
     ...expectedMountResult,
-    'componentWillReceiveProps',
+    'UNSAFE_componentWillReceiveProps',
     'shouldComponentUpdate',
-    'componentWillUpdate',
+    'UNSAFE_componentWillUpdate',
     'componentDidUpdate'
   ];
 
