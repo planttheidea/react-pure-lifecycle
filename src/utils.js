@@ -15,19 +15,17 @@ import {FUNCTION_NAME_REGEXP, IS_PRODUCTION, LIFECYCLE_METHODS} from './constant
  * @param {function} addMethods the method that will add the lifecycle methods to the component
  * @returns {function(ReactComponent, Object): ReactComponent} the decorator for a specific method
  */
-export const createSingleLifecycleMethodDecorator = (method, addMethods) => {
-  return (fn, options) => {
-    if (!isFunction(fn)) {
-      throw new TypeError(`Parameter passed to ${method} must be a function.`);
-    }
+export const createSingleLifecycleMethodDecorator = (method, addMethods) => (fn, options) => {
+  if (!isFunction(fn)) {
+    throw new TypeError(`Parameter passed to ${method} must be a function.`);
+  }
 
-    return addMethods(
-      {
-        [method]: fn
-      },
-      options
-    );
-  };
+  return addMethods(
+    {
+      [method]: fn
+    },
+    options
+  );
 };
 
 /**
@@ -58,11 +56,8 @@ export const getComponentDisplayName = (ReactComponent) => {
  * @param {ReactComponent} ComponentToTest the component to test
  * @returns {boolean} is ComponentToTest a react component instantiated via the class
  */
-export const isReactClass = (ComponentToTest) => {
-  return (
-    !!(ComponentToTest && ComponentToTest.prototype) && typeof ComponentToTest.prototype.isReactComponent === 'object'
-  );
-};
+export const isReactClass = (ComponentToTest) =>
+  !!(ComponentToTest && ComponentToTest.prototype) && typeof ComponentToTest.prototype.isReactComponent === 'object';
 
 /**
  * @function getInvalidMethodWarning
@@ -73,11 +68,10 @@ export const isReactClass = (ComponentToTest) => {
  * @param {string} methodName the name of the invalid method
  * @returns {string} the message to display in the warning
  */
-export const getInvalidMethodWarning = (methodName) => {
-  return LIFECYCLE_METHODS[methodName]
+export const getInvalidMethodWarning = (methodName) =>
+  LIFECYCLE_METHODS[methodName]
     ? `The value passed for ${methodName} is not a function, skipping.`
     : `The key ${methodName} is not a valid lifecycle method, skipping.`;
-};
 
 /**
  * @function getLifecycleMethodWithPropsInjected
@@ -89,11 +83,7 @@ export const getInvalidMethodWarning = (methodName) => {
  * @param {function} method the method to call
  * @returns {function(...Array<*>): *} the higher-order function with props injected as argument
  */
-export const getLifecycleMethodWithPropsInjected = (component, method) => {
-  return (...args) => {
-    return method(component.props, ...args);
-  };
-};
+export const getLifecycleMethodWithPropsInjected = (component, method) => (...args) => method(component.props, ...args);
 
 /**
  * @function setLifecycleMethods
@@ -106,8 +96,8 @@ export const getLifecycleMethodWithPropsInjected = (component, method) => {
  * @param {boolean} injectProps should the props be injected as the method's first parameter
  * @returns {ReactComponent} the augmented component
  */
-export const setLifecycleMethods = (component, methods, injectProps) => {
-  return Object.keys(methods).reduce((instance, methodName) => {
+export const setLifecycleMethods = (component, methods, injectProps) =>
+  Object.keys(methods).reduce((instance, methodName) => {
     const method = methods[methodName];
 
     if (LIFECYCLE_METHODS[methodName] && isFunction(method)) {
@@ -120,4 +110,3 @@ export const setLifecycleMethods = (component, methods, injectProps) => {
 
     return instance;
   }, component);
-};

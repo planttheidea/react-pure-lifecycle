@@ -28,5 +28,10 @@ export const LIFECYCLE_METHODS = {
   shouldComponentUpdate: true,
   componentWillUpdate: true,
   componentDidUpdate: true,
-  componentWillUnmount: true
+  componentWillUnmount: true,
+  UNSAFE_componentWillMount: true,
+  UNSAFE_componentWillReceiveProps: true,
+  UNSAFE_componentWillUpdate: true,
+  getSnapshotBeforeUpdate: true,
+  componentDidCatch: true
 };

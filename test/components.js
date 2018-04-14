@@ -9,9 +9,12 @@ import {mount} from 'enzyme';
 import * as components from 'src/components';
 import {DEFAULT_OPTIONS, LIFECYCLE_METHODS} from 'src/constants';
 
-const Functional = ({counter}) => {
-  return <div>{counter}</div>;
-};
+const MODERN_LIFECYCLE_METHODS = Object.keys(LIFECYCLE_METHODS).reduce(
+  (methods, key) => (LIFECYCLE_METHODS[`UNSAFE_${key}`] ? methods : methods.concat([key])),
+  []
+);
+
+const Functional = ({counter}) => <div>{counter}</div>;
 
 Functional.propTypes = {
   counter: PropTypes.number
@@ -71,7 +74,11 @@ const testIfLifecycleHookAdded = (t, method, ComponentToTest) => {
 const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
   let passed = [];
 
-  const methods = Object.keys(LIFECYCLE_METHODS).reduce((stubs, key) => {
+  const methods = MODERN_LIFECYCLE_METHODS.reduce((stubs, key) => {
+    if (key === 'getSnapshotBeforeUpdate') {
+      return stubs;
+    }
+
     return {
       ...stubs,
       [key]() {
@@ -91,7 +98,7 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
 
   const wrapper = mount(<ComponentWithHooks />);
 
-  const expectedMountResult = ['componentWillMount', 'componentDidMount'];
+  const expectedMountResult = ['UNSAFE_componentWillMount', 'componentDidMount'];
 
   t.deepEqual(passed, expectedMountResult);
 
@@ -101,9 +108,9 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
 
   const expectedUpdateResult = [
     ...expectedMountResult,
-    'componentWillReceiveProps',
+    'UNSAFE_componentWillReceiveProps',
     'shouldComponentUpdate',
-    'componentWillUpdate',
+    'UNSAFE_componentWillUpdate',
     'componentDidUpdate'
   ];
 
@@ -173,9 +180,7 @@ test('if getFunctionHoc will remove childContextTypes from the fn if it exists',
     }
   };
 
-  const FunctionalWithChildContext = ({counter}) => {
-    return <div>{counter}</div>;
-  };
+  const FunctionalWithChildContext = ({counter}) => <div>{counter}</div>;
 
   FunctionalWithChildContext.propTypes = {
     counter: PropTypes.number
