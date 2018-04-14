@@ -67,7 +67,7 @@ Div.defaultProps = {
 const WrappedDiv = lifecycle(methods, {usePureComponent: false})(Div);
 
 const fn = (...args) => {
-  console.log(args);
+  console.log('fn', args);
 };
 
 @lifecycle({componentDidUpdate: fn})

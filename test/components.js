@@ -9,13 +9,12 @@ import {mount} from 'enzyme';
 import * as components from 'src/components';
 import {DEFAULT_OPTIONS, LIFECYCLE_METHODS} from 'src/constants';
 
-const MODERN_LIFECYCLE_METHODS = Object.keys(LIFECYCLE_METHODS).reduce((methods, key) => {
-  return LIFECYCLE_METHODS[`UNSAFE_${key}`] ? methods : methods.concat([key]);
-}, []);
+const MODERN_LIFECYCLE_METHODS = Object.keys(LIFECYCLE_METHODS).reduce(
+  (methods, key) => (LIFECYCLE_METHODS[`UNSAFE_${key}`] ? methods : methods.concat([key])),
+  []
+);
 
-const Functional = ({counter}) => {
-  return <div>{counter}</div>;
-};
+const Functional = ({counter}) => <div>{counter}</div>;
 
 Functional.propTypes = {
   counter: PropTypes.number
@@ -181,9 +180,7 @@ test('if getFunctionHoc will remove childContextTypes from the fn if it exists',
     }
   };
 
-  const FunctionalWithChildContext = ({counter}) => {
-    return <div>{counter}</div>;
-  };
+  const FunctionalWithChildContext = ({counter}) => <div>{counter}</div>;
 
   FunctionalWithChildContext.propTypes = {
     counter: PropTypes.number

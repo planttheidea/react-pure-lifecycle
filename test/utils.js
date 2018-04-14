@@ -24,9 +24,7 @@ test('if createSingleLifecycleMethodDecorator will throw an error when run witho
 
 test('if createSingleLifecycleMethodDecorator returns an addHooks result', (t) => {
   const method = 'foo';
-  const addHooks = (object) => {
-    return object;
-  };
+  const addHooks = (object) => object;
   const fn = sinon.stub();
 
   const decorator = utils.createSingleLifecycleMethodDecorator(method, addHooks);
@@ -46,9 +44,7 @@ test('if createSingleLifecycleMethodDecorator returns an addHooks result', (t) =
 
 test('if createSingleLifecycleMethodDecorator returns an addHooks result with isPure set correctly', (t) => {
   const method = 'foo';
-  const addHooks = (object) => {
-    return object;
-  };
+  const addHooks = (object) => object;
   const fn = sinon.stub();
 
   const decorator = utils.createSingleLifecycleMethodDecorator(method, addHooks);
@@ -111,9 +107,7 @@ test('if getInvalidMethodWarning will get the right warning message for a non-li
 });
 
 test.serial('if isReactClass will check if the item passed has Component or PureComponent as an ancestor', (t) => {
-  const Functional = () => {
-    return <div />;
-  };
+  const Functional = () => <div />;
 
   t.false(utils.isReactClass(Functional));
 

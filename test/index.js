@@ -16,9 +16,7 @@ import addLifecycleMethods, {
   componentWillUnmount
 } from 'src/index';
 
-const FunctionalComponent = ({counter}) => {
-  return <div>{counter}</div>;
-};
+const FunctionalComponent = ({counter}) => <div>{counter}</div>;
 
 FunctionalComponent.propTypes = {
   counter: PropTypes.number
