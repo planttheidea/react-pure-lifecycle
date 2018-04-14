@@ -16,11 +16,9 @@ const componentDidUpdate = (...args) => {
   console.log('update', args);
 };
 
-const getChildContext = (props) => {
-  return {
-    baz: props.children.length
-  };
-};
+const getChildContext = (props) => ({
+  baz: props.children.length
+});
 
 const methods = {
   getChildContext,
@@ -30,23 +28,19 @@ const methods = {
   baz() {}
 };
 
-const Span = (props, {baz}) => {
-  return <span>&nbsp;({baz} characters in prior statement)</span>;
-};
+const Span = (props, {baz}) => <span>&nbsp;({baz} characters in prior statement)</span>;
 
 Span.contextTypes = {
   baz: PropTypes.number
 };
 
-const Div = ({children}) => {
-  return (
-    <div>
-      {children}
+const Div = ({children}) => (
+  <div>
+    {children}
 
-      <Span />
-    </div>
-  );
-};
+    <Span />
+  </div>
+);
 
 Div.propTypes = {
   children: PropTypes.node
