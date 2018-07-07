@@ -1,8 +1,14 @@
 // external dependencies
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent
+} from 'react';
 
 // utils
-import {getComponentDisplayName, setLifecycleMethods} from './utils';
+import {
+  getComponentDisplayName,
+  setLifecycleMethods
+} from './utils';
 
 /**
  * @function getClassHoc
@@ -55,6 +61,7 @@ export const getFunctionHoc = (PassedComponent, passedMethods, {injectProps, use
   const childContextTypes = PassedComponent.childContextTypes ? {...PassedComponent.childContextTypes} : undefined;
 
   if (childContextTypes) {
+    // eslint-disable-next-line no-param-reassign
     delete PassedComponent.childContextTypes;
   }
 

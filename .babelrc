@@ -1,16 +1,72 @@
 {
-  "plugins": [
-    "transform-decorators-legacy",
-    "add-module-exports"
-  ],
-  "presets": [
-    ["env", {
-      "loose": true,
-      "targets": [
-        "ie 9"
+  "env": {
+    "development": {
+      "presets": [
+        [
+          "env",
+          {
+            "exclude": ["transform-es2015-typeof-symbol"],
+            "loose": true,
+            "modules": false
+          }
+        ],
+        "react",
+        "stage-2"
       ]
-    }],
-    "react",
-    "stage-2"
-  ]
+    },
+    "es": {
+      "presets": [
+        [
+          "env",
+          {
+            "exclude": ["transform-es2015-typeof-symbol"],
+            "loose": true,
+            "modules": false
+          }
+        ],
+        "react",
+        "stage-2"
+      ]
+    },
+    "lib": {
+      "presets": [
+        [
+          "env",
+          {
+            "exclude": ["transform-es2015-typeof-symbol"],
+            "loose": true
+          }
+        ],
+        "react",
+        "stage-2"
+      ]
+    },
+    "production": {
+      "presets": [
+        [
+          "env",
+          {
+            "exclude": ["transform-es2015-typeof-symbol"],
+            "loose": true,
+            "modules": false
+          }
+        ],
+        "react",
+        "stage-2"
+      ]
+    },
+    "test": {
+      "presets": [
+        [
+          "env",
+          {
+            "exclude": ["transform-es2015-typeof-symbol"],
+            "loose": true
+          }
+        ],
+        "react",
+        "stage-2"
+      ]
+    }
+  }
 }

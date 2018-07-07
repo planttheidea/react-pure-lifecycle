@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent
+} from 'react';
 import {render} from 'react-dom';
 
 import lifecycle from '../src';
@@ -17,21 +20,21 @@ const componentDidUpdate = (...args) => {
 };
 
 const getChildContext = (props) => ({
-  baz: props.children.length
+  baz: props.children.length,
 });
 
 const methods = {
-  getChildContext,
+  baz() {},
   componentDidUpdate,
-  shouldComponentUpdate,
   componentWillUpdate: 'foo',
-  baz() {}
+  getChildContext,
+  shouldComponentUpdate,
 };
 
 const Span = (props, {baz}) => <span>&nbsp;({baz} characters in prior statement)</span>;
 
 Span.contextTypes = {
-  baz: PropTypes.number
+  baz: PropTypes.number,
 };
 
 const Div = ({children}) => (
@@ -43,19 +46,19 @@ const Div = ({children}) => (
 );
 
 Div.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 Div.contextTypes = {
-  bar: PropTypes.string
+  bar: PropTypes.string,
 };
 
 Div.childContextTypes = {
-  baz: PropTypes.number
+  baz: PropTypes.number,
 };
 
 Div.defaultProps = {
-  children: []
+  children: [],
 };
 
 const WrappedDiv = lifecycle(methods, {usePureComponent: false})(Div);
@@ -67,7 +70,7 @@ const fn = (...args) => {
 @lifecycle({componentDidUpdate: fn})
 class OtherDiv extends PureComponent {
   state = {
-    foo: 'bar'
+    foo: 'bar',
   };
 
   render() {
@@ -77,16 +80,16 @@ class OtherDiv extends PureComponent {
 
 class App extends Component {
   static propTypes = {
-    divText: PropTypes.string
+    divText: PropTypes.string,
   };
 
   static childContextTypes = {
-    bar: PropTypes.string
+    bar: PropTypes.string,
   };
 
   getChildContext() {
     return {
-      bar: 'baz'
+      bar: 'baz',
     };
   }
 

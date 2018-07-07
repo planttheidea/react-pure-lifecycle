@@ -17,44 +17,41 @@
   "bugs": {
     "url": "https://github.com/planttheidea/react-pure-lifecycle/issues"
   },
-  "dependencies": {
-    "lodash": "^4.17.5"
-  },
   "description": "Add pure function lifecycle methods to any React component",
   "devDependencies": {
     "ava": "^0.25.0",
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.2.3",
-    "babel-loader": "^7.1.4",
+    "babel-eslint": "^8.2.5",
+    "babel-loader": "^7.1.5",
     "babel-plugin-add-module-exports": "0.2.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.26.0",
     "browser-env": "^3.2.5",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "eslint": "^4.19.1",
-    "eslint-config-rapid7": "^2.11.1",
+    "enzyme-to-json": "^3.3.4",
+    "eslint": "^5.0.1",
+    "eslint-config-rapid7": "^3.0.3",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
     "in-publish": "2.0.0",
-    "lodash-webpack-plugin": "^0.11.5",
-    "nyc": "^11.6.0",
+    "nyc": "^12.0.2",
     "optimize-js-plugin": "^0.0.4",
-    "prop-types": "^15.6.1",
-    "react": "^16.3.1",
-    "react-dom": "^16.3.1",
-    "react-test-renderer": "^16.3.1",
+    "prop-types": "^15.6.2",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-test-renderer": "^16.4.1",
     "rimraf": "^2.6.2",
-    "sinon": "^4.5.0",
-    "webpack": "^4.5.0",
-    "webpack-cli": "^2.0.14",
-    "webpack-dev-server": "^3.1.3"
+    "sinon": "^6.1.3",
+    "webpack": "^4.15.1",
+    "webpack-cli": "^3.0.8",
+    "webpack-dev-server": "^3.1.4"
   },
   "homepage": "https://github.com/planttheidea/react-pure-lifecycle#readme",
   "keywords": [
@@ -64,6 +61,7 @@
   ],
   "license": "MIT",
   "main": "lib/index.js",
+  "module": "es/index.js",
   "name": "react-pure-lifecycle",
   "peerDependencies": {
     "react": "^15.3.0 || ^16.0.0"
@@ -73,18 +71,21 @@
     "url": "git+https://github.com/planttheidea/react-pure-lifecycle.git"
   },
   "scripts": {
-    "build": "NODE_ENV=development webpack --progress --colors",
-    "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
-    "clean": "rimraf lib && rimraf dist",
-    "dev": "NODE_ENV=development webpack-dev-server --progress --colors --config=webpack.config.dev.js",
+    "build": "NODE_ENV=development webpack --progress --colors --config=webpack/webpack.config.js",
+    "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack/webpack.config.minified.js",
+    "dev": "NODE_ENV=development webpack-dev-server --colors --progress --config=webpack/webpack.config.dev.js",
+    "dist": "rimraf dist && npm run build && npm run build:minified",
     "lint": "NODE_ENV=test eslint src",
+    "lint:fix": "NODE_ENV=test eslint src --fix",
     "prepublish": "if in-publish; then npm run prepublish:compile; fi",
-    "prepublish:compile": "npm run lint && npm run test:coverage && npm run clean && npm run transpile && npm run build && npm run build:minified",
+    "prepublish:compile": "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run dist",
     "start": "npm run dev",
-    "test": "NODE_PATH=.:src NODE_ENV=test ava --no-cache",
+    "test": "NODE_PATH=. NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",
-    "test:watch": "NODE_PATH=.:src NODE_ENV=test ava --watch",
-    "transpile": "babel src --out-dir lib --copy-files"
+    "test:update": "NODE_PATH=. NODE_ENV=test ava --update-snapshots",
+    "test:watch": "NODE_PATH=. NODE_ENV=test ava --watch",
+    "transpile:es": "rimraf es && BABEL_ENV=es babel src --out-dir es",
+    "transpile:lib": "rimraf lib && BABEL_ENV=lib babel src --out-dir lib"
   },
   "version": "2.2.0"
 }

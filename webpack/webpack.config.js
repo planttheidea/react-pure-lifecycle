@@ -1,23 +1,24 @@
-'use strict';
+/* eslint-disable import/no-commonjs */
 
 const path = require('path');
 const webpack = require('webpack');
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+
+const ROOT = path.join(__dirname, '..');
 
 module.exports = {
   cache: true,
 
   devtool: 'source-map',
 
-  entry: [path.resolve(__dirname, 'src', 'index.js')],
+  entry: [path.resolve(ROOT, 'src', 'index.js')],
 
   externals: {
     react: {
       amd: 'react',
       commonjs: 'react',
       commonjs2: 'react',
-      root: 'React'
-    }
+      root: 'React',
+    },
   },
 
   mode: 'development',
@@ -26,19 +27,19 @@ module.exports = {
     rules: [
       {
         enforce: 'pre',
-        include: [path.resolve(__dirname, 'src')],
+        include: [path.resolve(ROOT, 'src')],
         loader: 'eslint-loader',
         options: {
           configFile: '.eslintrc',
           emitError: true,
           failOnError: true,
           failOnWarning: true,
-          formatter: require('eslint-friendly-formatter')
+          formatter: require('eslint-friendly-formatter'),
         },
-        test: /\.js$/
+        test: /\.js$/,
       },
       {
-        include: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'DEV_ONLY')],
+        include: [path.resolve(ROOT, 'src'), path.resolve(ROOT, 'DEV_ONLY')],
         loader: 'babel-loader',
         options: {
           babelrc: false,
@@ -50,25 +51,25 @@ module.exports = {
               {
                 loose: true,
                 modules: false,
-                targets: ['ie 9']
-              }
+                targets: ['ie 9'],
+              },
             ],
             'react',
-            'stage-2'
-          ]
+            'stage-2',
+          ],
         },
-        test: /\.js$/
-      }
-    ]
+        test: /\.js$/,
+      },
+    ],
   },
 
   output: {
     filename: 'react-pure-lifecycle.js',
-    library: '',
+    library: 'PureLifecycle',
     libraryTarget: 'umd',
-    path: path.resolve(__dirname, 'dist'),
-    umdNamedDefine: true
+    path: path.resolve(ROOT, 'dist'),
+    umdNamedDefine: true,
   },
 
-  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV']), new LodashModuleReplacementPlugin()]
+  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV'])],
 };

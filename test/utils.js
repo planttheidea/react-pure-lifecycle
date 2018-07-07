@@ -1,7 +1,9 @@
 // test
 import test from 'ava';
-import _ from 'lodash';
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent
+} from 'react';
 import sinon from 'sinon';
 
 // src
@@ -11,7 +13,7 @@ import {DEFAULT_OPTIONS} from 'src/constants';
 test('if createSingleLifecycleMethodDecorator returns a function', (t) => {
   const result = utils.createSingleLifecycleMethodDecorator();
 
-  t.true(_.isFunction(result));
+  t.is(typeof result, 'function');
 });
 
 test('if createSingleLifecycleMethodDecorator will throw an error when run without a function parameter', (t) => {
@@ -29,12 +31,12 @@ test('if createSingleLifecycleMethodDecorator returns an addHooks result', (t) =
 
   const decorator = utils.createSingleLifecycleMethodDecorator(method, addHooks);
 
-  t.true(_.isFunction(decorator));
+  t.is(typeof decorator, 'function');
 
   const result = decorator(fn);
 
   t.deepEqual(result, {
-    [method]: fn
+    [method]: fn,
   });
 
   result[method]();
@@ -49,12 +51,12 @@ test('if createSingleLifecycleMethodDecorator returns an addHooks result with is
 
   const decorator = utils.createSingleLifecycleMethodDecorator(method, addHooks);
 
-  t.true(_.isFunction(decorator));
+  t.is(typeof decorator, 'function');
 
   const result = decorator(fn, DEFAULT_OPTIONS);
 
   t.deepEqual(result, {
-    [method]: fn
+    [method]: fn,
   });
 
   result[method]();
@@ -145,7 +147,7 @@ test(
     const invalidResult = utils.setLifecycleMethods(
       invalidComponent,
       {
-        [invalidMethod]: invalidStub
+        [invalidMethod]: invalidStub,
       },
       DEFAULT_OPTIONS.injectProps
     );
@@ -159,13 +161,13 @@ test(
     const validResult = utils.setLifecycleMethods(
       validComponent,
       {
-        [validMethod]: validStub
+        [validMethod]: validStub,
       },
       DEFAULT_OPTIONS.injectProps
     );
 
     t.true(validResult.hasOwnProperty(validMethod));
-    t.true(_.isFunction(validResult[validMethod]));
+    t.is(typeof validResult[validMethod], 'function');
   }
 );
 
@@ -179,7 +181,7 @@ test('if setLifecycleMethods will fire a warning to the console if the method is
   utils.setLifecycleMethods(
     component,
     {
-      [method]: value
+      [method]: value,
     },
     DEFAULT_OPTIONS.injectProps
   );
@@ -197,7 +199,7 @@ test('if setLifecycleMethods will add the method directly instead of a wrapper i
   utils.setLifecycleMethods(
     component,
     {
-      [method]: value
+      [method]: value,
     },
     false
   );
@@ -207,7 +209,7 @@ test('if setLifecycleMethods will add the method directly instead of a wrapper i
 
 test('if setLifecycleMethods will add the wrapper method if injectProps is false', (t) => {
   const component = {
-    props: {}
+    props: {},
   };
   const method = 'componentDidMount';
   const value = sinon.spy();
@@ -215,7 +217,7 @@ test('if setLifecycleMethods will add the wrapper method if injectProps is false
   utils.setLifecycleMethods(
     component,
     {
-      [method]: value
+      [method]: value,
     },
     true
   );
