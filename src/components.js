@@ -1,8 +1,14 @@
 // external dependencies
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent
+} from 'react';
 
 // utils
-import {getComponentDisplayName, setLifecycleMethods} from './utils';
+import {
+  getComponentDisplayName,
+  setLifecycleMethods
+} from './utils';
 
 /**
  * @function getClassHoc

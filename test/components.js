@@ -1,13 +1,19 @@
 // test
 import test from 'ava';
 import PropTypes from 'prop-types';
-import React, {Component, PureComponent} from 'react';
+import React, {
+  Component,
+  PureComponent
+} from 'react';
 import sinon from 'sinon';
 import {mount} from 'enzyme';
 
 // src
 import * as components from 'src/components';
-import {DEFAULT_OPTIONS, LIFECYCLE_METHODS} from 'src/constants';
+import {
+  DEFAULT_OPTIONS,
+  LIFECYCLE_METHODS
+} from 'src/constants';
 
 const MODERN_LIFECYCLE_METHODS = Object.keys(LIFECYCLE_METHODS).reduce(
   (methods, key) => (LIFECYCLE_METHODS[`UNSAFE_${key}`] ? methods : methods.concat([key])),
@@ -17,12 +23,12 @@ const MODERN_LIFECYCLE_METHODS = Object.keys(LIFECYCLE_METHODS).reduce(
 const Functional = ({counter}) => <div>{counter}</div>;
 
 Functional.propTypes = {
-  counter: PropTypes.number
+  counter: PropTypes.number,
 };
 
 class Standard extends Component {
   static propTypes = {
-    counter: PropTypes.number
+    counter: PropTypes.number,
   };
 
   render() {
@@ -34,7 +40,7 @@ class Standard extends Component {
 
 class Pure extends PureComponent {
   static propTypes = {
-    counter: PropTypes.number
+    counter: PropTypes.number,
   };
 
   render() {
@@ -54,7 +60,7 @@ class Pure extends PureComponent {
 const testIfLifecycleHookAdded = (t, method, ComponentToTest) => {
   const componentDidMount = sinon.stub();
   const methods = {
-    componentDidMount
+    componentDidMount,
   };
 
   const ComponentWithHooks = method(ComponentToTest, methods, DEFAULT_OPTIONS);
@@ -85,7 +91,7 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
         passed.push(key);
 
         return true;
-      }
+      },
     };
   }, {});
 
@@ -93,7 +99,7 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
 
   const ComponentWithHooks = method(ComponentToTest, methods, {
     ...DEFAULT_OPTIONS,
-    usePureComponent: false
+    usePureComponent: false,
   });
 
   const wrapper = mount(<ComponentWithHooks />);
@@ -103,7 +109,7 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
   t.deepEqual(passed, expectedMountResult);
 
   wrapper.setProps({
-    counter: 1
+    counter: 1,
   });
 
   const expectedUpdateResult = [
@@ -111,7 +117,7 @@ const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
     'UNSAFE_componentWillReceiveProps',
     'shouldComponentUpdate',
     'UNSAFE_componentWillUpdate',
-    'componentDidUpdate'
+    'componentDidUpdate',
   ];
 
   t.deepEqual(passed, expectedUpdateResult);
@@ -147,11 +153,11 @@ test('if getClassHoc will add all lifecycle hooks and fire in order for a pure c
 
 test('if getFunctionHoc will extend a standard class when isPure is false', (t) => {
   const methods = {
-    componentDidUpdate() {}
+    componentDidUpdate() {},
   };
   const options = {
     ...DEFAULT_OPTIONS,
-    usePureComponent: false
+    usePureComponent: false,
   };
 
   const Result = components.getFunctionHoc(Functional, methods, options);
@@ -162,7 +168,7 @@ test('if getFunctionHoc will extend a standard class when isPure is false', (t) 
 
 test('if getFunctionHoc will extend a pure class when isPure is true', (t) => {
   const methods = {
-    componentDidUpdate() {}
+    componentDidUpdate() {},
   };
 
   const Result = components.getFunctionHoc(Functional, methods, DEFAULT_OPTIONS);
@@ -175,19 +181,19 @@ test('if getFunctionHoc will remove childContextTypes from the fn if it exists',
   const methods = {
     getChildContext() {
       return {
-        foo: 'bar'
+        foo: 'bar',
       };
-    }
+    },
   };
 
   const FunctionalWithChildContext = ({counter}) => <div>{counter}</div>;
 
   FunctionalWithChildContext.propTypes = {
-    counter: PropTypes.number
+    counter: PropTypes.number,
   };
 
   const childContextTypes = {
-    foo: PropTypes.string
+    foo: PropTypes.string,
   };
 
   FunctionalWithChildContext.childContextTypes = childContextTypes;

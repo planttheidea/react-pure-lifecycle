@@ -1,15 +1,24 @@
 // external dependencies
-import isPlainObject from 'lodash/isPlainObject';
 import React from 'react';
 
 //components
-import {getClassHoc, getFunctionHoc} from './components';
+import {
+  getClassHoc,
+  getFunctionHoc
+} from './components';
 
 // constants
-import {DEFAULT_OPTIONS, LIFECYCLE_METHODS} from './constants';
+import {
+  DEFAULT_OPTIONS,
+  LIFECYCLE_METHODS
+} from './constants';
 
 // utils
-import {createSingleLifecycleMethodDecorator, isReactClass} from './utils';
+import {
+  createSingleLifecycleMethodDecorator,
+  isPlainObject,
+  isReactClass
+} from './utils';
 
 /**
  * @function addLifecycleMethods
@@ -35,31 +44,43 @@ const addLifecycleMethods = (methods = {}, optionsPassed = {}) => {
 
     return getHoc(PassedComponent, methods, {
       ...DEFAULT_OPTIONS,
-      ...optionsPassed
+      ...optionsPassed,
     });
   };
 };
 
 const {
+  getChildContext,
+  UNSAFE_componentWillMount,
   componentWillMount,
   componentDidMount,
+  UNSAFE_componentWillReceiveProps,
   componentWillReceiveProps,
   shouldComponentUpdate,
+  UNSAFE_componentWillUpdate,
   componentWillUpdate,
+  getSnapshotBeforeUpdate,
   componentDidUpdate,
-  componentWillUnmount
+  componentDidCatch,
+  componentWillUnmount,
 } = Object.keys(LIFECYCLE_METHODS).reduce((exportsObject, method) => {
   exportsObject[method] = createSingleLifecycleMethodDecorator(method, addLifecycleMethods);
 
   return exportsObject;
 }, {});
 
+export {getChildContext};
+export {UNSAFE_componentWillMount};
 export {componentWillMount};
 export {componentDidMount};
+export {UNSAFE_componentWillReceiveProps};
 export {componentWillReceiveProps};
 export {shouldComponentUpdate};
+export {UNSAFE_componentWillUpdate};
 export {componentWillUpdate};
+export {getSnapshotBeforeUpdate};
 export {componentDidUpdate};
+export {componentDidCatch};
 export {componentWillUnmount};
 
 export default addLifecycleMethods;

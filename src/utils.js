@@ -1,8 +1,9 @@
-// external dependencies
-import isFunction from 'lodash/isFunction';
-
 // constants
-import {FUNCTION_NAME_REGEXP, IS_PRODUCTION, LIFECYCLE_METHODS} from './constants';
+import {
+  FUNCTION_NAME_REGEXP,
+  IS_PRODUCTION,
+  LIFECYCLE_METHODS
+} from './constants';
 
 /**
  * @function createSingleLifecycleMethodDecorator
@@ -16,13 +17,13 @@ import {FUNCTION_NAME_REGEXP, IS_PRODUCTION, LIFECYCLE_METHODS} from './constant
  * @returns {function(ReactComponent, Object): ReactComponent} the decorator for a specific method
  */
 export const createSingleLifecycleMethodDecorator = (method, addMethods) => (fn, options) => {
-  if (!isFunction(fn)) {
+  if (typeof fn !== 'function') {
     throw new TypeError(`Parameter passed to ${method} must be a function.`);
   }
 
   return addMethods(
     {
-      [method]: fn
+      [method]: fn,
     },
     options
   );
@@ -39,13 +40,24 @@ export const createSingleLifecycleMethodDecorator = (method, addMethods) => (fn,
  */
 export const getComponentDisplayName = (ReactComponent) => {
   const componentName =
-    ReactComponent.displayName ||
-    ReactComponent.name ||
-    (FUNCTION_NAME_REGEXP.exec(ReactComponent.toString()) || [])[1] ||
-    'Component';
+    ReactComponent.displayName
+    || ReactComponent.name
+    || (FUNCTION_NAME_REGEXP.exec(ReactComponent.toString()) || [])[1]
+    || 'Component';
 
   return `PureLifecycle(${componentName})`;
 };
+
+/**
+ * @function isPlainObject
+ *
+ * @description
+ * is the object passed a plain object
+ *
+ * @param {any} object the object to test
+ * @returns {boolean} is the object a plain object
+ */
+export const isPlainObject = (object) => typeof object === 'object' && !!object && object.constructor === Object;
 
 /**
  * @function isReactClass
@@ -100,12 +112,11 @@ export const setLifecycleMethods = (component, methods, injectProps) =>
   Object.keys(methods).reduce((instance, methodName) => {
     const method = methods[methodName];
 
-    if (LIFECYCLE_METHODS[methodName] && isFunction(method)) {
+    if (LIFECYCLE_METHODS[methodName] && typeof method === 'function') {
       instance[methodName] = injectProps ? getLifecycleMethodWithPropsInjected(component, method) : method;
     } else if (!IS_PRODUCTION) {
-      /* eslint-disable no-console */
+      // eslint-disable-next-line no-console
       console.warn(getInvalidMethodWarning(methodName));
-      /* eslint-enable */
     }
 
     return instance;

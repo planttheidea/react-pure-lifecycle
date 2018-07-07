@@ -1,4 +1,4 @@
-'use strict';
+/* eslint-disable import/no-commonjs */
 
 const webpack = require('webpack');
 const OptimizeJsPlugin = require('optimize-js-plugin');
@@ -11,16 +11,16 @@ module.exports = Object.assign({}, defaultConfig, {
   mode: 'production',
 
   output: Object.assign({}, defaultConfig.output, {
-    filename: 'react-pure-lifecycle.min.js'
+    filename: 'react-pure-lifecycle.min.js',
   }),
 
   plugins: defaultConfig.plugins.concat([
     new webpack.LoaderOptionsPlugin({
       debug: false,
-      minimize: true
+      minimize: true,
     }),
     new OptimizeJsPlugin({
-      sourceMap: false
-    })
-  ])
+      sourceMap: false,
+    }),
+  ]),
 });
