@@ -5,7 +5,6 @@ import {
   shallow
 } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import isFunction from 'lodash/isFunction';
 import PropTypes from 'prop-types';
 import React from 'react';
 import sinon from 'sinon';
@@ -41,7 +40,7 @@ class ClassComponent extends React.Component {
 test('if addLifecycleMethods returns a function', (t) => {
   const result = addLifecycleMethods();
 
-  t.true(isFunction(result));
+  t.is(typeof result, 'function');
 });
 
 test('if addLifecycleMethods throws when passed a non-object for methods', (t) => {
@@ -59,7 +58,7 @@ test('if addLifecycleMethods throws when passed a non-object for options', (t) =
 test('if addLifecycleMethods returns an HOC of the component passed', (t) => {
   const result = addLifecycleMethods()(FunctionalComponent);
 
-  t.true(isFunction(result));
+  t.is(typeof result, 'function');
 });
 
 test('if addLifecycleMethods returns the correct HOC based on the component type passed', (t) => {

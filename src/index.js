@@ -64,6 +64,7 @@ const {
   componentDidCatch,
   componentWillUnmount,
 } = Object.keys(LIFECYCLE_METHODS).reduce((exportsObject, method) => {
+  // eslint-disable-next-line no-param-reassign
   exportsObject[method] = createSingleLifecycleMethodDecorator(method, addLifecycleMethods);
 
   return exportsObject;

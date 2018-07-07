@@ -61,6 +61,7 @@ export const getFunctionHoc = (PassedComponent, passedMethods, {injectProps, use
   const childContextTypes = PassedComponent.childContextTypes ? {...PassedComponent.childContextTypes} : undefined;
 
   if (childContextTypes) {
+    // eslint-disable-next-line no-param-reassign
     delete PassedComponent.childContextTypes;
   }
 

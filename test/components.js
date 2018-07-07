@@ -50,13 +50,6 @@ class Pure extends PureComponent {
   }
 }
 
-/**
- * test if the lifecycle method was added to the component
- *
- * @param {Object} t
- * @param {function} method
- * @param {Component} ComponentToTest
- */
 const testIfLifecycleHookAdded = (t, method, ComponentToTest) => {
   const componentDidMount = sinon.stub();
   const methods = {
@@ -70,13 +63,6 @@ const testIfLifecycleHookAdded = (t, method, ComponentToTest) => {
   t.true(componentDidMount.calledOnce);
 };
 
-/**
- * test if all the methods are added and fired in order
- *
- * @param {Object} t
- * @param {function} method
- * @param {Component} ComponentToTest
- */
 const testIfLifecycleHooksFireInOrder = (t, method, ComponentToTest) => {
   let passed = [];
 

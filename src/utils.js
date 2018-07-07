@@ -113,6 +113,7 @@ export const setLifecycleMethods = (component, methods, injectProps) =>
     const method = methods[methodName];
 
     if (LIFECYCLE_METHODS[methodName] && typeof method === 'function') {
+      // eslint-disable-next-line no-param-reassign
       instance[methodName] = injectProps ? getLifecycleMethodWithPropsInjected(component, method) : method;
     } else if (!IS_PRODUCTION) {
       // eslint-disable-next-line no-console

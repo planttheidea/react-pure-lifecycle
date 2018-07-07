@@ -1,6 +1,5 @@
 // test
 import test from 'ava';
-import _ from 'lodash';
 import React, {
   Component,
   PureComponent
@@ -14,7 +13,7 @@ import {DEFAULT_OPTIONS} from 'src/constants';
 test('if createSingleLifecycleMethodDecorator returns a function', (t) => {
   const result = utils.createSingleLifecycleMethodDecorator();
 
-  t.true(_.isFunction(result));
+  t.is(typeof result, 'function');
 });
 
 test('if createSingleLifecycleMethodDecorator will throw an error when run without a function parameter', (t) => {
@@ -32,7 +31,7 @@ test('if createSingleLifecycleMethodDecorator returns an addHooks result', (t) =
 
   const decorator = utils.createSingleLifecycleMethodDecorator(method, addHooks);
 
-  t.true(_.isFunction(decorator));
+  t.is(typeof decorator, 'function');
 
   const result = decorator(fn);
 
@@ -52,7 +51,7 @@ test('if createSingleLifecycleMethodDecorator returns an addHooks result with is
 
   const decorator = utils.createSingleLifecycleMethodDecorator(method, addHooks);
 
-  t.true(_.isFunction(decorator));
+  t.is(typeof decorator, 'function');
 
   const result = decorator(fn, DEFAULT_OPTIONS);
 
@@ -168,7 +167,7 @@ test(
     );
 
     t.true(validResult.hasOwnProperty(validMethod));
-    t.true(_.isFunction(validResult[validMethod]));
+    t.is(typeof validResult[validMethod], 'function');
   }
 );
 

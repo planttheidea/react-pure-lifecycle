@@ -1,5 +1,5 @@
 {
-  "extends": ["rapid7/browser"],
+  "extends": ["rapid7/browser", "rapid7/strict"],
   "globals": {
     "__dirname": true,
     "global": true,
@@ -8,5 +8,7 @@
     "require": true
   },
   "parser": "babel-eslint",
-  "rules": {}
+  "rules": {
+    "sort-keys": 0
+  }
 }
