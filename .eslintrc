@@ -1,5 +1,5 @@
 {
-  "extends": ["rapid7/browser", "rapid7/strict"],
+  "extends": ["rapid7/browser", "rapid7/react", "rapid7/strict"],
   "globals": {
     "__dirname": true,
     "global": true,

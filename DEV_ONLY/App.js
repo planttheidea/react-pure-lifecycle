@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, {
   Component,
-  PureComponent
+  PureComponent,
 } from 'react';
 import {render} from 'react-dom';
 
@@ -67,7 +67,6 @@ const fn = (...args) => {
   console.log('fn', args);
 };
 
-@lifecycle({componentDidUpdate: fn})
 class OtherDiv extends PureComponent {
   state = {
     foo: 'bar',
@@ -77,6 +76,8 @@ class OtherDiv extends PureComponent {
     return <div>foo</div>;
   }
 }
+
+const WrappedOtherDiv = lifecycle({componentDidUpdate: fn})(Div);
 
 class App extends Component {
   static propTypes = {
@@ -102,7 +103,7 @@ class App extends Component {
 
         <WrappedDiv>{divText}</WrappedDiv>
 
-        <OtherDiv foo={divText} />
+        <WrappedOtherDiv foo={divText} />
       </div>
     );
   }

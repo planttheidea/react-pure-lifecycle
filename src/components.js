@@ -1,13 +1,13 @@
 // external dependencies
 import React, {
   Component,
-  PureComponent
+  PureComponent,
 } from 'react';
 
 // utils
 import {
   getComponentDisplayName,
-  setLifecycleMethods
+  setLifecycleMethods,
 } from './utils';
 
 /**

@@ -2,7 +2,7 @@
 import {
   FUNCTION_NAME_REGEXP,
   IS_PRODUCTION,
-  LIFECYCLE_METHODS
+  LIFECYCLE_METHODS,
 } from './constants';
 
 /**

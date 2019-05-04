@@ -41,23 +41,6 @@ module.exports = {
       {
         include: [path.resolve(ROOT, 'src'), path.resolve(ROOT, 'DEV_ONLY')],
         loader: 'babel-loader',
-        options: {
-          babelrc: false,
-          cacheDirectory: true,
-          plugins: ['transform-decorators-legacy', 'add-module-exports'],
-          presets: [
-            [
-              'env',
-              {
-                loose: true,
-                modules: false,
-                targets: ['ie 9'],
-              },
-            ],
-            'react',
-            'stage-2',
-          ],
-        },
         test: /\.js$/,
       },
     ],

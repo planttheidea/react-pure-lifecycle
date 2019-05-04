@@ -1,23 +1,20 @@
-// external dependencies
-import React from 'react';
-
 //components
 import {
   getClassHoc,
-  getFunctionHoc
+  getFunctionHoc,
 } from './components';
 
 // constants
 import {
   DEFAULT_OPTIONS,
-  LIFECYCLE_METHODS
+  LIFECYCLE_METHODS,
 } from './constants';
 
 // utils
 import {
   createSingleLifecycleMethodDecorator,
   isPlainObject,
-  isReactClass
+  isReactClass,
 } from './utils';
 
 /**
